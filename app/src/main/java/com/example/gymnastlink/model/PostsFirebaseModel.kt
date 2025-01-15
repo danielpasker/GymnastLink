@@ -6,7 +6,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.ktx.Firebase
 
-class FirebaseModel {
+class PostsFirebaseModel {
     private val database = Firebase.firestore
 
     init {

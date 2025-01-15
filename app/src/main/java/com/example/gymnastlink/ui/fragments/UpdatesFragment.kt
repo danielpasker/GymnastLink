@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -25,6 +26,7 @@ class UpdatesFragment : Fragment() {
     private lateinit var postsView: RecyclerWithTitleView
     private lateinit var adapter: PostAdapter
     private lateinit var postsActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var progressBar: ProgressBar
 
     companion object {
         var postList = mutableListOf<Post>()
@@ -43,6 +45,8 @@ class UpdatesFragment : Fragment() {
         val mainActivity = activity as? MainActivity
         mainActivity?.showBottomNavigation(true)
         mainActivity?.showReturnButtonOnToolbar(false)
+
+        progressBar = view.findViewById(R.id.progressBar)
 
         postsView = view.findViewById(R.id.posts_view)
         postsView.title.text = getString(R.string.updates)
@@ -68,10 +72,13 @@ class UpdatesFragment : Fragment() {
     }
 
     private fun getAllPosts() {
+        progressBar.visibility = View.VISIBLE
+
         PostModel.shared.getAllPosts {
             postList = it.toMutableList()
             adapter.set(it)
             adapter.notifyDataSetChanged()
+            progressBar.visibility = View.GONE
         }
     }
 

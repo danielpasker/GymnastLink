@@ -2,17 +2,17 @@ package com.example.gymnastlink.model
 
 class PostModel private constructor(){
 
-    private val firebaseModel = FirebaseModel()
+    private val postsFirebaseModel = PostsFirebaseModel()
 
     companion object {
         val shared = PostModel()
     }
 
     fun getAllPosts(callback: (List<Post>) -> Unit) {
-        firebaseModel.getAllPosts(callback)
+        postsFirebaseModel.getAllPosts(callback)
     }
 
     fun addPost(post: Post, callback: () -> Unit) {
-        firebaseModel.addPost(post, callback)
+        postsFirebaseModel.addPost(post, callback)
     }
 }
