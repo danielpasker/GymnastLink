@@ -16,9 +16,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.gymnastlink.R
-import com.example.gymnastlink.model.Converters
+import com.example.gymnastlink.utils.Converters
 import com.example.gymnastlink.model.Post
-import com.example.gymnastlink.model.PostModel
+import com.example.gymnastlink.controller.PostController
 import com.example.gymnastlink.ui.MainActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.time.LocalDate
@@ -91,7 +91,7 @@ class NewPostFragment : Fragment() {
                     date = LocalDate.now()
                 )
 
-                PostModel.shared.addPost(post) {
+                PostController.shared.addPost(post) {
                     findNavController().navigateUp()
                 }
             }

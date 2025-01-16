@@ -1,11 +1,11 @@
-package com.example.gymnastlink.model.dao
+package com.example.gymnastlink.dao
 
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.gymnastlink.base.MyApplication
-import com.example.gymnastlink.model.Converters
+import com.example.gymnastlink.utils.MyApplication
+import com.example.gymnastlink.utils.Converters
 import com.example.gymnastlink.model.Post
 
 @Database(entities = [Post::class], version = 3)

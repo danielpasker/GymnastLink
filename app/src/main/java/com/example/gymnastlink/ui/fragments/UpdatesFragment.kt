@@ -12,15 +12,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.gymnastlink.R
 import com.example.gymnastlink.model.Post
-import com.example.gymnastlink.model.PostModel
+import com.example.gymnastlink.controller.PostController
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import java.time.LocalDate
 
 class UpdatesFragment : Fragment() {
     private lateinit var postsView: RecyclerWithTitleView
@@ -74,7 +72,7 @@ class UpdatesFragment : Fragment() {
     private fun getAllPosts() {
         progressBar.visibility = View.VISIBLE
 
-        PostModel.shared.getAllPosts {
+        PostController.shared.getAllPosts {
             postList = it.sortedByDescending { it.date }.toMutableList()
             adapter.set(it)
             adapter.notifyDataSetChanged()
@@ -85,7 +83,7 @@ class UpdatesFragment : Fragment() {
     }
 
     private fun startListeningForPostChanges() {
-        PostModel.shared.listenForPostChanges { posts ->
+        PostController.shared.listenForPostChanges { posts ->
             postList = posts.toMutableList()
             adapter.set(posts)
             adapter.notifyDataSetChanged()
@@ -100,6 +98,6 @@ class UpdatesFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        PostModel.shared.removePostListener()
+        PostController.shared.removePostListener()
     }
 }

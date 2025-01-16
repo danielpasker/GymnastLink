@@ -1,13 +1,14 @@
-package com.example.gymnastlink.model
+package com.example.gymnastlink.firebase
 
-import com.example.gymnastlink.base.Constants
+import com.example.gymnastlink.model.Post
+import com.example.gymnastlink.utils.Constants
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ListenerRegistration
 
-class PostsFirebaseModel {
+class FirebasePostManager {
     private val database = Firebase.firestore
     private var postsListener: ListenerRegistration? = null
 

@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymnastlink.R
-import com.example.gymnastlink.model.Converters
+import com.example.gymnastlink.utils.Converters
 import com.example.gymnastlink.model.Post
 
 class PostAdapter(private var posts: List<Post>) :

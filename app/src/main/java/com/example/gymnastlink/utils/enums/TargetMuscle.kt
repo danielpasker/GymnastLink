@@ -1,4 +1,4 @@
-package com.example.gymnastlink.model
+package com.example.gymnastlink.utils.enums
 
 enum class TargetMuscle(val muscle: String) {
 

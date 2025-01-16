@@ -1,4 +1,4 @@
-package com.example.gymnastlink.base
+package com.example.gymnastlink.utils
 
 import android.app.Application
 import android.content.Context

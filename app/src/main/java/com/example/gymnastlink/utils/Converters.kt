@@ -1,4 +1,4 @@
-package com.example.gymnastlink.model
+package com.example.gymnastlink.utils
 
 import androidx.room.TypeConverter
 import java.text.NumberFormat

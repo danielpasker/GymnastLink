@@ -1,8 +1,8 @@
 import android.os.Parcel
 import android.os.Parcelable
-import com.example.gymnastlink.model.TargetMuscle
-import com.example.gymnastlink.model.BodyPart
-import com.example.gymnastlink.model.Equipment
+import com.example.gymnastlink.utils.enums.TargetMuscle
+import com.example.gymnastlink.utils.enums.BodyPart
+import com.example.gymnastlink.utils.enums.Equipment
 import com.google.gson.annotations.SerializedName
 
 

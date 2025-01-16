@@ -1,20 +1,22 @@
-package com.example.gymnastlink.model
+package com.example.gymnastlink.controller
 
 import android.os.Looper
 import androidx.core.os.HandlerCompat
-import com.example.gymnastlink.model.dao.LocalDataBase
-import com.example.gymnastlink.model.dao.LocalDataBaseRepository
+import com.example.gymnastlink.dao.LocalDataBase
+import com.example.gymnastlink.dao.LocalDataBaseRepository
+import com.example.gymnastlink.firebase.FirebasePostManager
+import com.example.gymnastlink.model.Post
 import java.util.concurrent.Executors
 
-class PostModel private constructor(){
+class PostController private constructor(){
 
-    private val postsFirebaseModel = PostsFirebaseModel()
+    private val firebasePostManager = FirebasePostManager()
     private val localdatabase: LocalDataBaseRepository = LocalDataBase.database
     private val executer = Executors.newSingleThreadExecutor()
     private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
 
     companion object {
-        val shared = PostModel()
+        val shared = PostController()
     }
 
     fun getAllPosts(callback: (List<Post>) -> Unit) {
@@ -23,7 +25,7 @@ class PostModel private constructor(){
             if (localPosts.isNotEmpty()) {
                 mainHandler.post { callback(localPosts) }
             } else {
-                postsFirebaseModel.getAllPosts { firebasePosts ->
+                firebasePostManager.getAllPosts { firebasePosts ->
                     val sortedFirebasePosts = firebasePosts.sortedByDescending { it.date }
                     executer.execute {
                         localdatabase.postDao().insertAll(*sortedFirebasePosts.toTypedArray())
@@ -37,14 +39,14 @@ class PostModel private constructor(){
     fun addPost(post: Post, callback: () -> Unit) {
         executer.execute {
             localdatabase.postDao().insertAll(post)
-            postsFirebaseModel.addPost(post) {
+            firebasePostManager.addPost(post) {
                 mainHandler.post { callback() }
             }
         }
     }
 
     fun listenForPostChanges(callback: (List<Post>) -> Unit) {
-        postsFirebaseModel.listenForPostChanges { firebasePosts ->
+        firebasePostManager.listenForPostChanges { firebasePosts ->
             executer.execute {
                 localdatabase.postDao().insertAll(*firebasePosts.toTypedArray())
                 mainHandler.post { callback(firebasePosts) }
@@ -53,6 +55,6 @@ class PostModel private constructor(){
     }
 
     fun removePostListener() {
-        postsFirebaseModel.removePostListener()
+        firebasePostManager.removePostListener()
     }
 }
