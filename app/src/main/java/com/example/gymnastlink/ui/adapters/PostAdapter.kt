@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymnastlink.R
 import com.example.gymnastlink.model.Post
@@ -15,7 +14,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class PostAdapter(private val posts: List<Post>) :
+class PostAdapter(private val posts: List<Post>, private val onItemClick: (Post) -> Unit) :
     RecyclerView.Adapter<PostAdapter.BlogPostViewHolder>() {
 
     class BlogPostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,9 +50,7 @@ class PostAdapter(private val posts: List<Post>) :
             }
         }
 
-        holder.itemView.setOnClickListener {
-            it.findNavController().navigate(R.id.action_updatesFragment_to_fragmentPostComment)
-        }
+        holder.itemView.setOnClickListener { onItemClick(post) }
     }
 
     override fun getItemCount(): Int = posts.size

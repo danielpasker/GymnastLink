@@ -45,22 +45,36 @@
         android:id="@+id/workoutsFragment"
         android:name="com.example.gymnastlink.ui.fragments.WorkoutsFragment"
         android:label="fragment_workouts"
-        tools:layout="@layout/fragment_workouts" >
+        tools:layout="@layout/fragment_workouts">
 
         <action
             android:id="@+id/action_workoutsFragment_to_exerciseDetailsFragment"
-            app:destination="@id/exerciseDetailsFragment" >
-        </action>
+            app:destination="@id/exerciseDetailsFragment"/>
 
     </fragment>
 
     <fragment
         android:id="@+id/exerciseDetailsFragment"
         android:name="com.example.gymnastlink.ui.fragments.ExerciseDetailsFragment"
-        android:label="ExerciseDetailsFragment" >
+        android:label="ExerciseDetailsFragment">
         <argument
             android:name="position"
             app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.gymnastlink.ui.fragments.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+
+        <action
+            android:id="@+id/action_profileFragment_to_fragmentPostComment"
+            app:destination="@id/postCommentsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
 </navigation>

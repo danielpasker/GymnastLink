@@ -10,7 +10,7 @@
         android:icon="@drawable/workouts_nav_icon"
         android:title="@string/workouts" />
     <item
-        android:id="@+id/profile_page_item"
+        android:id="@+id/profileFragment"
         android:enabled="true"
         android:icon="@drawable/profile_nav_icon"
         android:title="@string/profile" />
