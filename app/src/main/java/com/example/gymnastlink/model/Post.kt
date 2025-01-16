@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Entity
 data class Post(
@@ -35,7 +36,8 @@ data class Post(
             val content = json[CONTENT_KEY] as? String ?: ""
             val image = json[IMAGE_KEY] as? String ?: ""
             val likeCount = json[LIKE_COUNT_KEY] as? Int ?: 0
-            val date = json[DATE_KEY] as? LocalDate ?: LocalDate.now()
+            val dateString = json[DATE_KEY] as? String ?: LocalDate.now().toString()
+            val date = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE)
 
             return Post(
                 userName = userName,
@@ -59,6 +61,6 @@ data class Post(
             CONTENT_KEY to content,
             IMAGE_KEY to image,
             LIKE_COUNT_KEY to likeCount,
-            DATE_KEY to date
+            DATE_KEY to date.toString()
         )
 }

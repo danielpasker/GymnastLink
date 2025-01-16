@@ -19,14 +19,15 @@ class PostModel private constructor(){
 
     fun getAllPosts(callback: (List<Post>) -> Unit) {
         executer.execute {
-            val localPosts = localdatabase.postDao().getAllPosts()
+            val localPosts = localdatabase.postDao().getAllPosts().sortedByDescending { it.date }
             if (localPosts.isNotEmpty()) {
                 mainHandler.post { callback(localPosts) }
             } else {
                 postsFirebaseModel.getAllPosts { firebasePosts ->
+                    val sortedFirebasePosts = firebasePosts.sortedByDescending { it.date }
                     executer.execute {
-                        localdatabase.postDao().insertAll(*firebasePosts.toTypedArray())
-                        mainHandler.post { callback(firebasePosts) }
+                        localdatabase.postDao().insertAll(*sortedFirebasePosts.toTypedArray())
+                        mainHandler.post { callback(sortedFirebasePosts) }
                     }
                 }
             }

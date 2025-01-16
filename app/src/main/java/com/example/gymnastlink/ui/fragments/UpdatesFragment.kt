@@ -75,7 +75,7 @@ class UpdatesFragment : Fragment() {
         progressBar.visibility = View.VISIBLE
 
         PostModel.shared.getAllPosts {
-            postList = it.toMutableList()
+            postList = it.sortedByDescending { it.date }.toMutableList()
             adapter.set(it)
             adapter.notifyDataSetChanged()
             progressBar.visibility = View.GONE
