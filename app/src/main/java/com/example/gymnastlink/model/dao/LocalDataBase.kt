@@ -8,7 +8,7 @@ import com.example.gymnastlink.base.MyApplication
 import com.example.gymnastlink.model.Converters
 import com.example.gymnastlink.model.Post
 
-@Database(entities = [Post::class], version = 2)
+@Database(entities = [Post::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class LocalDataBaseRepository: RoomDatabase() {
     abstract fun postDao(): PostDao

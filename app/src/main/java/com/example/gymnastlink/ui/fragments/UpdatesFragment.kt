@@ -80,10 +80,26 @@ class UpdatesFragment : Fragment() {
             adapter.notifyDataSetChanged()
             progressBar.visibility = View.GONE
         }
+
+        startListeningForPostChanges()
+    }
+
+    private fun startListeningForPostChanges() {
+        PostModel.shared.listenForPostChanges { posts ->
+            postList = posts.toMutableList()
+            adapter.set(posts)
+            adapter.notifyDataSetChanged()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         getAllPosts()
+        startListeningForPostChanges()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        PostModel.shared.removePostListener()
     }
 }
