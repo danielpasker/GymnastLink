@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -46,6 +47,10 @@ class NewPostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         (activity as? MainActivity)?.showReturnButtonOnToolbar(true)
+
+        view.findViewById<TextView>(R.id.new_post_title).apply {
+            text = getString(R.string.new_post_text)
+        }
 
         postTitle = view.findViewById(R.id.editTextPostTitle)
         postContent = view.findViewById(R.id.editTextPostContent)
