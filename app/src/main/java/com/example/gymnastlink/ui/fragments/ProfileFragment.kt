@@ -21,7 +21,6 @@ import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
-import java.time.LocalDate
 
 class ProfileFragment : Fragment() {
 
@@ -39,7 +38,10 @@ class ProfileFragment : Fragment() {
     private lateinit var userPostsView: RecyclerWithTitleView
     private lateinit var postAdapter: PostAdapter
     private lateinit var pickImageLauncher: ActivityResultLauncher<Intent>
-    private val userPosts = mutableListOf<Post>()
+
+    companion object {
+        var userPosts = mutableListOf<Post>()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +63,7 @@ class ProfileFragment : Fragment() {
         userPostsView = view.findViewById(R.id.user_posts_view)
         userPostsView.title.text = getString(R.string.user_posts)
 
+        // TODO: Replace with actual user data
         postAdapter = PostAdapter(userPosts, onItemClick = {
             view.findNavController().navigate(R.id.action_profileFragment_to_fragmentPostComment)
         })
@@ -69,9 +72,6 @@ class ProfileFragment : Fragment() {
 
         profileImage = view.findViewById(R.id.profile_user_avatar)
         profileImage.setOnClickListener { openImagePicker() }
-
-        // Load user posts (dummy data for now)
-        loadUserPosts()
 
         editFab = view.findViewById<ExtendedFloatingActionButton>(R.id.edit_profile_fab).apply {
             setOnClickListener {
@@ -106,35 +106,6 @@ class ProfileFragment : Fragment() {
 
     private fun handleImageSelection(uri: Uri) {
         profileImage.setImageURI(uri)
-    }
-
-    private fun loadUserPosts() {
-        // Add dummy data
-        userPosts.add(
-            Post(
-                "John Doe",
-                "Fitness Enthusiast",
-                "Post Title 1",
-                "This is the first post content.",
-                null,
-                10,
-                LocalDate.now()
-            )
-        )
-        userPosts.add(
-            Post(
-                "Jane Smith",
-                "Yoga Instructor",
-                "Post Title 2",
-                "This is the second post content.",
-                null,
-                5,
-                LocalDate.now()
-            )
-        )
-
-        // Notify the adapter of data changes
-        postAdapter.notifyDataSetChanged()
     }
 
     private fun setIsEditing(isEditing: Boolean) {
