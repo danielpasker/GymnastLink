@@ -10,11 +10,11 @@ import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
-import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.controller.PostController
+import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
@@ -63,7 +63,9 @@ class UpdatesFragment : Fragment() {
                 }
             }
 
-        adapter = PostAdapter(postList)
+        adapter = PostAdapter(postList, onItemClick = {
+            view.findNavController().navigate(R.id.action_updatesFragment_to_fragmentPostComment)
+        })
         postsView.recyclerView.adapter = adapter
 
         getAllPosts()

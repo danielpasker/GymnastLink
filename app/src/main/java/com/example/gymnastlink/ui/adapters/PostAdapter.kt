@@ -6,16 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymnastlink.R
-import com.example.gymnastlink.utils.Converters
 import com.example.gymnastlink.model.Post
+import com.example.gymnastlink.utils.Converters
 
-class PostAdapter(private var posts: List<Post>) :
+class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post) -> Unit) :
     RecyclerView.Adapter<PostAdapter.BlogPostViewHolder>() {
 
-    fun set(posts: List<Post>){
+    fun set(posts: List<Post>) {
         this.posts = posts
     }
 
@@ -48,13 +47,11 @@ class PostAdapter(private var posts: List<Post>) :
 
         post.image?.let {
             val imageByteArray = Converters.decodeImageFromBase64(it)
-            BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)?.let {
-                bitmap -> holder.postImage.setImageBitmap(bitmap) }
+            BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
+                ?.let { bitmap -> holder.postImage.setImageBitmap(bitmap) }
         }
 
-        holder.itemView.setOnClickListener {
-            it.findNavController().navigate(R.id.action_updatesFragment_to_fragmentPostComment)
-        }
+        holder.itemView.setOnClickListener { onItemClick(post) }
     }
 
     override fun getItemCount(): Int = posts.size

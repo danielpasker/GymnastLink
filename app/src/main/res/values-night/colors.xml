@@ -12,9 +12,11 @@
 
     <color name="layout_surface">#68000000</color>
     <color name="card_cyan_background">#003028</color>
+    <color name="profile_info_card_background">@color/black</color>
     <color name="cancel_fab_color">#2F2F2F</color>
     <color name="fab_icon_color">@color/black</color>
     <color name="comment_field_fill">@color/black</color>
     <color name="comment_field_shadow">@color/gray</color>
     <color name="add_comment_icon_fll">@color/black</color>
+    <color name="user_details_font">@color/white</color>
 </resources>

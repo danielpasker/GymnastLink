@@ -16,10 +16,12 @@
 
     <color name="layout_surface">#F3EDF7</color>
     <color name="card_cyan_background">#00BFA5</color>
+    <color name="profile_info_card_background">#212121</color>
     <color name="cyan_button">#008E77</color>
     <color name="cancel_fab_color">@color/black</color>
     <color name="fab_icon_color">@color/white</color>
     <color name="comment_field_fill">@color/layout_surface</color>
     <color name="comment_field_shadow">@color/black</color>
     <color name="add_comment_icon_fll">@color/white</color>
+    <color name="user_details_font">@color/black</color>
 </resources>

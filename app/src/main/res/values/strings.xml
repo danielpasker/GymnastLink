@@ -23,4 +23,17 @@
     <string name="my_plan_header">My Plan</string>
     <string name="add_new_comment">Add new comment</string>
     <string name="comments">Comments</string>
+    <string name="edit">Edit</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="user_posts">User Posts</string>
+    <string name="save">Save</string>
+    <string name="cm_unit">cm</string>
+    <string name="kg_unit">kg</string>
+    <string name="gender_title">Gender:</string>
+    <string name="age_title">Age:</string>
+    <string name="weight_title">Weight:</string>
+    <string name="height_title">Height:</string>
+    <string name="placeholder">__</string>
+    <string name="your_title">Your title</string>
+    <string name="username">username</string>"
 </resources>
