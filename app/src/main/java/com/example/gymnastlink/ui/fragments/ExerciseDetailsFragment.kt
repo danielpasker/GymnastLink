@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.navigation.fragment.findNavController
 import com.example.gymnastlink.R
+import com.example.gymnastlink.ui.MainActivity
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ExerciseDetailsFragment : Fragment() {
 
@@ -36,14 +35,10 @@ class ExerciseDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as? MainActivity)?.showReturnButtonOnToolbar(true)
+
         view.findViewById<MaterialCardView>(R.id.exercise_details_card).setBackgroundResource(
             R.drawable.gradient_background_blue)
-
-        view.findViewById<FloatingActionButton>(R.id.exercise_details_cancel_fab).apply {
-            setOnClickListener {
-                findNavController().navigateUp()
-            }
-        }
 
         exerciseName = view.findViewById(R.id.exercuse_details_name_textview)
         muscleName = view.findViewById(R.id.exercise_details_muscle_name)
