@@ -2,35 +2,30 @@ package com.example.gymnastlink.firebase
 
 import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.utils.Constants
-import com.google.firebase.firestore.firestoreSettings
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.memoryCacheSettings
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.QuerySnapshot
 
-class FirebasePostManager {
-    private val database = Firebase.firestore
+class FirebasePostManager : FirebaseManager() {
     private var postsListener: ListenerRegistration? = null
 
-    init {
-        val settings = firestoreSettings {
-            setLocalCacheSettings(memoryCacheSettings {  })
+    private fun insertPostsFromServer(snapshot: QuerySnapshot?, callback: (List<Post>) -> Unit) {
+        if (snapshot != null) {
+            val posts: MutableList<Post> = mutableListOf()
+            for (doc in snapshot.documents) {
+                doc.data?.let { Post.fromJSON(it) }?.let { posts.add(it) }
+            }
+            callback(posts)
+        } else {
+            callback(emptyList())
         }
-
-        database.firestoreSettings = settings
     }
 
     fun getAllPosts(callback: (List<Post>) -> Unit) {
         database.collection(Constants.Collections.POSTS).get().addOnCompleteListener {
-            when (it.isSuccessful) {
-                true -> {
-                    val posts: MutableList<Post> = mutableListOf()
-                    for (json in it.result) {
-                        posts.add(Post.fromJSON(json.data))
-                    }
-                    callback(posts)
-                }
-                false -> callback(listOf())
+            if (it.isSuccessful) {
+                insertPostsFromServer(it.result, callback)
+            } else {
+                callback(emptyList())
             }
         }
     }
@@ -45,16 +40,11 @@ class FirebasePostManager {
     fun listenForPostChanges(callback: (List<Post>) -> Unit) {
         postsListener = database.collection(Constants.Collections.POSTS)
             .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    callback(listOf())
+                if (e != null || snapshots == null) {
+                    callback(emptyList())
                     return@addSnapshotListener
                 }
-
-                val posts: MutableList<Post> = mutableListOf()
-                for (doc in snapshots!!) {
-                    posts.add(Post.fromJSON(doc.data))
-                }
-                callback(posts)
+                insertPostsFromServer(snapshots, callback)
             }
     }
 

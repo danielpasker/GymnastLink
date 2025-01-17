@@ -8,7 +8,7 @@ import com.example.gymnastlink.model.Post
 @Dao
 interface PostDao {
 
-    @Query("SELECT * FROM Post")
+    @Query("SELECT * FROM Post ORDER BY date DESC")
     fun getAllPosts(): List<Post>
 
 //    TODO: to be implemented when profile page is created

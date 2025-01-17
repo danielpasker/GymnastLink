@@ -38,7 +38,6 @@ class PostController private constructor(){
 
     fun addPost(post: Post, callback: () -> Unit) {
         executer.execute {
-            localdatabase.postDao().insertAll(post)
             firebasePostManager.addPost(post) {
                 mainHandler.post { callback() }
             }
@@ -49,7 +48,8 @@ class PostController private constructor(){
         firebasePostManager.listenForPostChanges { firebasePosts ->
             executer.execute {
                 localdatabase.postDao().insertAll(*firebasePosts.toTypedArray())
-                mainHandler.post { callback(firebasePosts) }
+                val allPosts = localdatabase.postDao().getAllPosts()
+                mainHandler.post { callback(allPosts) }
             }
         }
     }
