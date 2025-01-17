@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -13,19 +14,20 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
 import com.example.gymnastlink.model.Post
+import com.example.gymnastlink.controller.PostController
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import java.time.LocalDate
 
 class UpdatesFragment : Fragment() {
     private lateinit var postsView: RecyclerWithTitleView
     private lateinit var adapter: PostAdapter
     private lateinit var postsActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var progressBar: ProgressBar
 
     companion object {
-        val postList = mutableListOf<Post>()
+        var postList = mutableListOf<Post>()
     }
 
     override fun onCreateView(
@@ -41,6 +43,8 @@ class UpdatesFragment : Fragment() {
         val mainActivity = activity as? MainActivity
         mainActivity?.showBottomNavigation(true)
         mainActivity?.showReturnButtonOnToolbar(false)
+
+        progressBar = view.findViewById(R.id.progressBar)
 
         postsView = view.findViewById(R.id.posts_view)
         postsView.title.text = getString(R.string.updates)
@@ -59,49 +63,41 @@ class UpdatesFragment : Fragment() {
                 }
             }
 
-        // TODO: delete when handling data from a real source
-        if (postList.isEmpty()) {
-            postList.add(
-                Post(
-                    "John Smith",
-                    "Heavy Lifter",
-                    "Post Title 1",
-                    "This is the first post content.",
-                    null,
-                    12,
-                    LocalDate.of(2024, 11, 27)
-                )
-            )
-            postList.add(
-                Post(
-                    "Jane Doe",
-                    "Runner",
-                    "Post Title 2",
-                    "This is the second post content.",
-                    null,
-                    0,
-                    LocalDate.of(2024, 11, 27)
-                )
-            )
-            postList.add(
-                Post(
-                    "Alex Kim",
-                    "Cyclist",
-                    "Post Title 3",
-                    "This is the third post content.",
-                    null,
-                    2,
-                    LocalDate.of(2024, 9, 25)
-                )
-            )
-        }
-
         adapter = PostAdapter(postList)
         postsView.recyclerView.adapter = adapter
+
+        getAllPosts()
+    }
+
+    private fun getAllPosts() {
+        progressBar.visibility = View.VISIBLE
+
+        PostController.shared.getAllPosts {
+            postList = it.sortedByDescending { it.date }.toMutableList()
+            adapter.set(it)
+            adapter.notifyDataSetChanged()
+            progressBar.visibility = View.GONE
+        }
+
+        startListeningForPostChanges()
+    }
+
+    private fun startListeningForPostChanges() {
+        PostController.shared.listenForPostChanges { posts ->
+            postList = posts.toMutableList()
+            adapter.set(posts)
+            adapter.notifyDataSetChanged()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        adapter.notifyDataSetChanged()
+        getAllPosts()
+        startListeningForPostChanges()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        PostController.shared.removePostListener()
     }
 }

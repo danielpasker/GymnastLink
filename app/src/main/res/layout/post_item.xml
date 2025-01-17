@@ -54,7 +54,6 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/placeholder_image"
             android:contentDescription="@string/post_image_description" />
 
         <TextView
