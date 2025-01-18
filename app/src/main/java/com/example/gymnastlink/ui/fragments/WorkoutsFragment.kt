@@ -28,10 +28,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 
+private const val API_KEY_HEADER = "x-rapidapi-key"
+private const val HOST_HEADER = "x-rapidapi-host"
+
 class WorkoutsFragment : Fragment() {
     private val httpClient = OkHttpClient()
     private val cache = mutableMapOf<String, CacheEntry<List<ExerciseItem>>>()
-    private val cacheDuration = 5 * 60 * 1000 // 5 minutes in milliseconds
+    private val cacheDuration = Constants.CACHE_DURATION
     private val firebaseSecretsManager = FirebaseSecretsManager()
 
     private lateinit var workoutSearchEditText: EditText
@@ -135,13 +138,12 @@ class WorkoutsFragment : Fragment() {
             return emptyList()
         }
 
-        val url = "https://$exerciseDBUrl/exercises/name/$query?offset=0&limit=12"
         val request = withContext(Dispatchers.IO) {
             Request.Builder()
-                .url(url)
+                .url(Constants.URLS.GET_EXERCISE_BY_NAME_FORMAT.format(exerciseDBUrl, query))
                 .get()
-                .addHeader("x-rapidapi-key", exerciseDBApiKey)
-                .addHeader("x-rapidapi-host", exerciseDBUrl)
+                .addHeader(API_KEY_HEADER, exerciseDBApiKey)
+                .addHeader(HOST_HEADER, exerciseDBUrl)
                 .build()
         }
 
