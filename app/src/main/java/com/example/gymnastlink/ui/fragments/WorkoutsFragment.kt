@@ -12,11 +12,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
+import com.example.gymnastlink.firebase.FirebaseSecretsManager
 import com.example.gymnastlink.model.CacheEntry
 import com.example.gymnastlink.model.ExerciseItem
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.ExerciseAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
+import com.example.gymnastlink.utils.Constants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +32,7 @@ class WorkoutsFragment : Fragment() {
     private val httpClient = OkHttpClient()
     private val cache = mutableMapOf<String, CacheEntry<List<ExerciseItem>>>()
     private val cacheDuration = 5 * 60 * 1000 // 5 minutes in milliseconds
+    private val firebaseSecretsManager = FirebaseSecretsManager()
 
     private lateinit var workoutSearchEditText: EditText
     private lateinit var searchResultsView: RecyclerWithTitleView
@@ -115,13 +118,32 @@ class WorkoutsFragment : Fragment() {
             return cachedEntry.data
         }
 
-        val url = "https://exercisedb.p.rapidapi.com/exercises/name/$query?offset=0&limit=12"
-        val request = Request.Builder()
-            .url(url)
-            .get()
-            .addHeader("x-rapidapi-key", "930966f7e6msha00418dbcf4a6cap164be0jsn7586adac0375")
-            .addHeader("x-rapidapi-host", "exercisedb.p.rapidapi.com")
-            .build()
+        val exerciseDBUrl = withContext(Dispatchers.IO) {
+            firebaseSecretsManager.getSecretValue(
+                Constants.Secrets.EXERCISE_DB,
+                Constants.Secrets.URL
+            )
+        } ?: ""
+        val exerciseDBApiKey = withContext(Dispatchers.IO) {
+            firebaseSecretsManager.getSecretValue(
+                Constants.Secrets.EXERCISE_DB,
+                Constants.Secrets.API_KEY
+            )
+        } ?: ""
+
+        if (exerciseDBUrl.isEmpty() || exerciseDBApiKey.isEmpty()) {
+            return emptyList()
+        }
+
+        val url = "https://$exerciseDBUrl/exercises/name/$query?offset=0&limit=12"
+        val request = withContext(Dispatchers.IO) {
+            Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("x-rapidapi-key", exerciseDBApiKey)
+                .addHeader("x-rapidapi-host", exerciseDBUrl)
+                .build()
+        }
 
         return withContext(Dispatchers.IO) {
             val response: Response = httpClient.newCall(request).execute()
