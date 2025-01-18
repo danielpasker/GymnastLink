@@ -63,8 +63,9 @@ class UpdatesFragment : Fragment() {
                 }
             }
 
-        adapter = PostAdapter(postList, onItemClick = {
-            view.findNavController().navigate(R.id.action_updatesFragment_to_fragmentPostComment)
+        adapter = PostAdapter(postList, onItemClick = { post ->
+            val action = UpdatesFragmentDirections.actionUpdatesFragmentToFragmentPostComment(post.postId)
+            view.findNavController().navigate(action)
         })
         postsView.recyclerView.adapter = adapter
 

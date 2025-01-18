@@ -39,7 +39,11 @@
         android:id="@+id/postCommentsFragment"
         android:name="com.example.gymnastlink.ui.fragments.PostCommentsFragment"
         android:label="New Post"
-        tools:layout="@layout/fragment_post_comments" />
+        tools:layout="@layout/fragment_post_comments">
+        <argument
+            android:name="postId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/workoutsFragment"
