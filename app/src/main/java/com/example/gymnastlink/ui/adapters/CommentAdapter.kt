@@ -8,8 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gymnastlink.R
 import com.example.gymnastlink.model.Comment
 
-class CommentAdapter(private val comments: List<Comment>) :
+class CommentAdapter(private var comments: List<Comment>) :
     RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
+
+    fun set(comments: List<Comment>) {
+        this.comments = comments
+    }
 
     class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userName: TextView = itemView.findViewById(R.id.userNameText)

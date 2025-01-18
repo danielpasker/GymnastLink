@@ -4,14 +4,16 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.gymnastlink.model.Comment
 import com.example.gymnastlink.utils.MyApplication
 import com.example.gymnastlink.utils.Converters
 import com.example.gymnastlink.model.Post
 
-@Database(entities = [Post::class], version = 3)
+@Database(entities = [Post::class, Comment::class], version = 4)
 @TypeConverters(Converters::class)
 abstract class LocalDataBaseRepository: RoomDatabase() {
     abstract fun postDao(): PostDao
+    abstract fun commentDao(): CommentDao
 }
 
 object LocalDataBase {
