@@ -45,7 +45,7 @@
         android:id="@+id/workoutsFragment"
         android:name="com.example.gymnastlink.ui.fragments.WorkoutsFragment"
         android:label="fragment_workouts"
-        tools:layout="@layout/fragment_workouts" >
+        tools:layout="@layout/fragment_workouts">
 
         <action
             android:id="@+id/action_workoutsFragment_to_exerciseDetailsFragment"
@@ -53,7 +53,7 @@
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"></action>
+            app:popExitAnim="@android:anim/slide_out_right" />
 
     </fragment>
 
@@ -62,8 +62,8 @@
         android:name="com.example.gymnastlink.ui.fragments.ExerciseDetailsFragment"
         android:label="ExerciseDetailsFragment">
         <argument
-            android:name="position"
-            app:argType="integer" />
+            android:name="exerciseItem"
+            app:argType="com.example.gymnastlink.model.ExerciseItem" />
     </fragment>
 
     <fragment

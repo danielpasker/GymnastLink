@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui)
     implementation(libs.gson)
+    implementation(libs.okhttp)
     implementation(libs.glide)
     implementation(libs.androidx.navigation.fragment.ktx.v235)
     implementation(libs.androidx.navigation.ui.ktx)

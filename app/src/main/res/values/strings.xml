@@ -36,4 +36,6 @@
     <string name="placeholder">__</string>
     <string name="your_title">Your title</string>
     <string name="username">username</string>"
+    <string name="muscle_format">Muscle: %s</string>
+    <string name="equipment_format">Equipment: %s</string>
 </resources>
