@@ -25,7 +25,6 @@ class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post)
         val title: TextView = itemView.findViewById(R.id.post_title)
         val content: TextView = itemView.findViewById(R.id.post_content)
         val postImage: ImageView = itemView.findViewById(R.id.post_image)
-        val likeCount: TextView = itemView.findViewById(R.id.post_like_count)
         val date: TextView = itemView.findViewById(R.id.post_date)
     }
 
@@ -42,7 +41,6 @@ class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post)
         holder.userAvatar.text = post.userName.split(' ').map { it.first() }.joinToString("")
         holder.title.text = post.title
         holder.content.text = post.content
-        holder.likeCount.text = Converters.formatNumber(post.likeCount)
         holder.date.text = Converters.formatDate(post.date)
 
         post.image?.let {

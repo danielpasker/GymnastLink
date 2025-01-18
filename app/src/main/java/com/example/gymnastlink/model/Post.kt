@@ -14,7 +14,6 @@ data class Post(
     val title: String,
     val content: String,
     val image: String?,
-    val likeCount: Int,
     val date: LocalDate
 ){
     companion object {
@@ -25,7 +24,6 @@ data class Post(
         const val TITLE_KEY = "title"
         const val CONTENT_KEY = "content"
         const val IMAGE_KEY = "image"
-        const val LIKE_COUNT_KEY = "likeCount"
         const val DATE_KEY = "date"
 
         fun fromJSON(json: Map<String, Any>): Post {
@@ -35,7 +33,6 @@ data class Post(
             val title = json[TITLE_KEY] as? String ?: ""
             val content = json[CONTENT_KEY] as? String ?: ""
             val image = json[IMAGE_KEY] as? String ?: ""
-            val likeCount = json[LIKE_COUNT_KEY] as? Int ?: 0
             val dateString = json[DATE_KEY] as? String ?: LocalDate.now().toString()
             val date = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE)
 
@@ -46,7 +43,6 @@ data class Post(
                 title = title,
                 content = content,
                 image = image,
-                likeCount = likeCount,
                 date = date
             )
         }
@@ -60,7 +56,6 @@ data class Post(
             TITLE_KEY to title,
             CONTENT_KEY to content,
             IMAGE_KEY to image,
-            LIKE_COUNT_KEY to likeCount,
             DATE_KEY to date.toString()
         )
 }

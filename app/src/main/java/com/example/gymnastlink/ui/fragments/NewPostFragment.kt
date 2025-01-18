@@ -87,7 +87,6 @@ class NewPostFragment : Fragment() {
                     title = postTitle.text.toString(),
                     content = postContent.text.toString(),
                     image = imageByteArray?.let { Converters.encodeImageToBase64(it) },
-                    likeCount = 3,
                     date = LocalDate.now()
                 )
 
