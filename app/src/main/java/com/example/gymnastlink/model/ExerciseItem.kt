@@ -1,17 +1,16 @@
+package com.example.gymnastlink.model
+
 import android.os.Parcel
 import android.os.Parcelable
-import com.example.gymnastlink.utils.enums.TargetMuscle
-import com.example.gymnastlink.utils.enums.BodyPart
-import com.example.gymnastlink.utils.enums.Equipment
 import com.google.gson.annotations.SerializedName
 
 
 data class ExerciseItem(
     @SerializedName("id") val id: String,
     @SerializedName("name") val name: String,
-    @SerializedName("equipment") val equipment: Equipment,
-    @SerializedName("target") val target: TargetMuscle,
-    @SerializedName("bodyPart") val bodyPart: BodyPart,
+    @SerializedName("equipment") val equipment: String,
+    @SerializedName("target") val target: String,
+    @SerializedName("bodyPart") val bodyPart: String,
     @SerializedName("secondaryMuscles") val secondaryMuscles: Array<String>,
     @SerializedName("instructions") val instructions: Array<String>,
     @SerializedName("gifUrl") val gifUrl: String
@@ -19,9 +18,9 @@ data class ExerciseItem(
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        Equipment.valueOf(parcel.readString() ?: Equipment.UNKNOWN.name),
-        TargetMuscle.valueOf(parcel.readString() ?: TargetMuscle.UNKNOWN.name),
-        BodyPart.valueOf(parcel.readString() ?: BodyPart.UNKNOWN.name),
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.createStringArray() ?: arrayOf(),
         parcel.createStringArray() ?: arrayOf(),
         parcel.readString() ?: ""
@@ -30,9 +29,9 @@ data class ExerciseItem(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
         parcel.writeString(name)
-        parcel.writeString(equipment.name)
-        parcel.writeString(target.name)
-        parcel.writeString(bodyPart.name)
+        parcel.writeString(equipment)
+        parcel.writeString(target)
+        parcel.writeString(bodyPart)
         parcel.writeStringArray(secondaryMuscles)
         parcel.writeStringArray(instructions)
         parcel.writeString(gifUrl)
