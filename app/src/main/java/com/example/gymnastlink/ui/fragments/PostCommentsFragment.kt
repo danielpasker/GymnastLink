@@ -54,6 +54,8 @@ class PostCommentsFragment : Fragment() {
 
         adapter = CommentAdapter(commentList)
         commentsView.recyclerView.adapter = adapter
+
+        getComments()
     }
 
     private fun getComments() {
