@@ -34,12 +34,6 @@ class Converters {
             }
         }
 
-        fun formatNumber(number: Number, locale: Locale = Locale.getDefault()): String {
-            val numberFormat = NumberFormat.getNumberInstance(locale)
-
-            return numberFormat.format(number)
-        }
-
         fun encodeImageToBase64(image: ByteArray): String {
             return Base64.encodeToString(image, Base64.DEFAULT)
         }
