@@ -44,4 +44,8 @@
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="sign_in">Sign In</string>
+    <string name="logout">Logout</string>
+    <string name="authentication_succeeded">Authentication succeeded</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="sign_in_successfully">Sign in successfully</string>
 </resources>
