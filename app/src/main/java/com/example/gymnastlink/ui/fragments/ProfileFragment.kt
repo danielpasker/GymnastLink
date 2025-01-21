@@ -1,5 +1,6 @@
 package com.example.gymnastlink.ui.fragments
 
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
@@ -7,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,11 +18,14 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
 import com.example.gymnastlink.model.Post
+import com.example.gymnastlink.ui.LoginActivity
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class ProfileFragment : Fragment() {
 
@@ -81,6 +86,14 @@ class ProfileFragment : Fragment() {
         saveFab = view.findViewById<ExtendedFloatingActionButton>(R.id.save_profile_fab).apply {
             setOnClickListener {
                 setIsEditing(false)
+            }
+        }
+        view.findViewById<Button>(R.id.logout_button).apply {
+            setOnClickListener{
+                Firebase.auth.signOut()
+                val intent = Intent(activity, LoginActivity::class.java)
+                startActivity(intent)
+                activity?.finish()
             }
         }
 
