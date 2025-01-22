@@ -1,8 +1,8 @@
 package com.example.gymnastlink.ui.fragments
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,11 +17,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
+import com.example.gymnastlink.controller.UserController
 import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.ui.LoginActivity
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
+import com.example.gymnastlink.utils.Converters
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.auth.ktx.auth
@@ -67,6 +69,9 @@ class ProfileFragment : Fragment() {
         heightEditText = view.findViewById(R.id.height_edit_text)
         userPostsView = view.findViewById(R.id.user_posts_view)
         userPostsView.title.text = getString(R.string.user_posts)
+        profileImage = view.findViewById(R.id.profile_user_avatar)
+
+        displayUserData()
 
         // TODO: Replace with actual user data
         postAdapter = PostAdapter(userPosts, onItemClick = {
@@ -75,9 +80,9 @@ class ProfileFragment : Fragment() {
         userPostsView.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         userPostsView.recyclerView.adapter = postAdapter
 
-        profileImage = view.findViewById(R.id.profile_user_avatar)
-        profileImage.setOnClickListener { openImagePicker() }
-
+        profileImage.setOnClickListener {
+            openImagePicker()
+        }
         editFab = view.findViewById<ExtendedFloatingActionButton>(R.id.edit_profile_fab).apply {
             setOnClickListener {
                 setIsEditing(true)
@@ -86,6 +91,7 @@ class ProfileFragment : Fragment() {
         saveFab = view.findViewById<ExtendedFloatingActionButton>(R.id.save_profile_fab).apply {
             setOnClickListener {
                 setIsEditing(false)
+                saveUpdatedData()
             }
         }
         view.findViewById<Button>(R.id.logout_button).apply {
@@ -109,6 +115,21 @@ class ProfileFragment : Fragment() {
             }
     }
 
+    private fun displayUserData() {
+        userNameEditText.setText(MainActivity.user?.userName)
+        userTitleEditText.setText(MainActivity.user?.userTitle)
+        ageEditText.setText(MainActivity.user?.age.toString())
+        genderEditText.setText(MainActivity.user?.gender)
+        weightEditText.setText(MainActivity.user?.weight.toString())
+        heightEditText.setText(MainActivity.user?.height.toString())
+
+        val imageByteArray = MainActivity.user?.userImg?.let { Converters.decodeImageFromBase64(it) }
+        if (imageByteArray != null) {
+            BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
+                ?.let { bitmap -> profileImage.setImageBitmap(bitmap) }
+        }
+    }
+
     private fun openImagePicker() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
@@ -119,6 +140,17 @@ class ProfileFragment : Fragment() {
 
     private fun handleImageSelection(uri: Uri) {
         profileImage.setImageURI(uri)
+
+        val imageByteArray = requireContext().contentResolver.openInputStream(uri)?.use { inputStream ->
+            inputStream.readBytes()
+        }
+
+        val base64Image = imageByteArray?.let { Converters.encodeImageToBase64(it) }
+        if (base64Image != null) {
+            MainActivity.user?.userImg = base64Image
+        }
+
+        saveUpdatedData()
     }
 
     private fun setIsEditing(isEditing: Boolean) {
@@ -149,4 +181,21 @@ class ProfileFragment : Fragment() {
                 }
         }
     }
+
+    private fun saveUpdatedData() {
+        val userId = MainActivity.user?.userId ?: return
+
+        val updatedData = mapOf(
+            "userName" to userNameEditText.text.toString(),
+            "userTitle" to userTitleEditText.text.toString(),
+            "age" to ageEditText.text.toString().toDoubleOrNull(),
+            "weight" to weightEditText.text.toString().toDoubleOrNull(),
+            "gender" to genderEditText.text.toString(),
+            "height" to heightEditText.text.toString().toDoubleOrNull(),
+            "userImg" to MainActivity.user?.userImg
+        )
+
+        UserController.shared.update(userId, updatedData) {}
+    }
+
 }

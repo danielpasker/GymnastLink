@@ -8,12 +8,14 @@ import com.example.gymnastlink.model.Comment
 import com.example.gymnastlink.utils.MyApplication
 import com.example.gymnastlink.utils.Converters
 import com.example.gymnastlink.model.Post
+import com.example.gymnastlink.model.User
 
-@Database(entities = [Post::class, Comment::class], version = 4)
+@Database(entities = [Post::class, Comment::class, User::class], version = 5)
 @TypeConverters(Converters::class)
 abstract class LocalDataBaseRepository: RoomDatabase() {
     abstract fun postDao(): PostDao
     abstract fun commentDao(): CommentDao
+    abstract fun userDao(): UserDao
 }
 
 object LocalDataBase {

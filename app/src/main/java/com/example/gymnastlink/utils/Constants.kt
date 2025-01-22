@@ -5,6 +5,7 @@ object Constants {
         const val POSTS = "posts"
         const val COMMENTS = "comments"
         const val SECRETS = "secrets"
+        const val USERS = "users"
     }
 
     object Secrets {

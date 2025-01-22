@@ -7,6 +7,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gymnastlink.R
+import com.example.gymnastlink.controller.UserController
+import com.example.gymnastlink.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -30,7 +32,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun signIn(){
+    private fun signIn() {
         auth.createUserWithEmailAndPassword(emailText.text.toString(), passwordText.text.toString())
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -39,9 +41,7 @@ class RegisterActivity : AppCompatActivity() {
                         getString(R.string.sign_in_successfully),
                         Toast.LENGTH_SHORT,).show()
 
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    registerNewUser()
                 } else {
                     Toast.makeText(
                         baseContext,
@@ -49,5 +49,28 @@ class RegisterActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT,).show()
                 }
             }
+    }
+
+    private fun registerNewUser() {
+        val newUser = Firebase.auth.currentUser?.let {
+            User(
+                userId = it.uid,
+                userName = it.email.toString(),
+                userTitle = it.email.toString(),
+                age = 0.0,
+                weight = 0.0,
+                gender = "M/F",
+                height = 0.0,
+                userImg = ""
+            )
+        }
+
+        if (newUser != null) {
+            UserController.shared.insert(newUser){
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 }

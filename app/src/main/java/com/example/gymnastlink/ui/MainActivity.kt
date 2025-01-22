@@ -9,16 +9,30 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.gymnastlink.R
+import com.example.gymnastlink.controller.UserController
+import com.example.gymnastlink.model.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var toolbar: Toolbar
     private lateinit var navController: NavController
 
+    companion object {
+        var user: User? = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Firebase.auth.currentUser?.let {
+            UserController.shared.getUserById(it.uid) {
+                user = it
+            }
+        }
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         val navHostController: NavHostFragment? =
