@@ -11,9 +11,8 @@ interface PostDao {
     @Query("SELECT * FROM Post ORDER BY date DESC")
     fun getAllPosts(): List<Post>
 
-//    TODO: to be implemented when profile page is created
-    @Query("SELECT * FROM Post WHERE userName =:useName")
-    fun getPostsByUserName(useName: String): List<Post>
+    @Query("SELECT * FROM Post WHERE userId =:userId")
+    fun getPostsByUserId(userId: String): List<Post>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg post: Post)

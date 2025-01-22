@@ -14,15 +14,18 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
+import com.example.gymnastlink.controller.PostController
 import com.example.gymnastlink.controller.UserController
 import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.ui.LoginActivity
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
+import com.example.gymnastlink.ui.fragments.UpdatesFragment.Companion.postList
 import com.example.gymnastlink.utils.Converters
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
@@ -74,11 +77,9 @@ class ProfileFragment : Fragment() {
         userPostsView.title.text = getString(R.string.user_posts)
         profileImage = view.findViewById(R.id.profile_user_avatar)
 
-        displayUserData()
-
-        // TODO: Replace with actual user data
-        postAdapter = PostAdapter(userPosts, onItemClick = {
-            view.findNavController().navigate(R.id.action_profileFragment_to_fragmentPostComment)
+        postAdapter = PostAdapter(userPosts, onItemClick = { post ->
+            val action = ProfileFragmentDirections.actionProfileFragmentToFragmentPostComment(post.postId)
+            view.findNavController().navigate(action)
         })
         userPostsView.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         userPostsView.recyclerView.adapter = postAdapter
@@ -116,6 +117,12 @@ class ProfileFragment : Fragment() {
                     }
                 }
             }
+
+        displayUserData()
+
+        lifecycleScope.launch {
+            getUserPosts()
+        }
     }
 
     private fun displayUserData() {
@@ -130,6 +137,16 @@ class ProfileFragment : Fragment() {
         if (imageByteArray != null) {
             BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
                 ?.let { bitmap -> profileImage.setImageBitmap(bitmap) }
+        }
+    }
+
+    private fun getUserPosts() {
+        MainActivity.user?.let {
+            PostController.shared.getPostsByUserId(it.userId) {
+                userPosts = it.sortedByDescending { it.date }.toMutableList()
+                postAdapter.set(it)
+                postAdapter.notifyDataSetChanged()
+            }
         }
     }
 

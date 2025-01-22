@@ -36,6 +36,22 @@ class PostController private constructor(){
         }
     }
 
+    fun getPostsByUserId(userId: String, callback: (List<Post>) -> Unit) {
+        executer.execute {
+            val localPosts = localdatabase.postDao().getPostsByUserId(userId)
+            if (localPosts.isNotEmpty()) {
+                mainHandler.post { callback(localPosts) }
+            } else {
+                firebasePostManager.getPostsByUserId (userId) { firebasePosts ->
+                    executer.execute {
+                        localdatabase.postDao().insertAll(*firebasePosts.toTypedArray())
+                        mainHandler.post { callback(firebasePosts) }
+                    }
+                }
+            }
+        }
+    }
+
     fun addPost(post: Post, callback: () -> Unit) {
         executer.execute {
             firebasePostManager.addPost(post) {

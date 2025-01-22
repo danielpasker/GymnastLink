@@ -30,6 +30,17 @@ class FirebasePostManager : FirebaseManager() {
         }
     }
 
+    fun getPostsByUserId(userId: String, callback: (List<Post>) -> Unit) {
+        database.collection(Constants.Collections.POSTS).whereEqualTo("userId", userId)
+            .get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    insertPostsFromServer(task.result, callback)
+                } else {
+                    callback(emptyList())
+                }
+            }
+    }
+
     fun addPost(post: Post, callback: () -> Unit) {
         database.collection(Constants.Collections.POSTS).document(post.postId).set(post.json)
             .addOnCompleteListener {
