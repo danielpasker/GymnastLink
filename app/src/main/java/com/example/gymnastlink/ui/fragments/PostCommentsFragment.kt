@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
 import com.example.gymnastlink.controller.CommentController
@@ -15,6 +16,7 @@ import com.example.gymnastlink.ui.adapters.CommentAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class PostCommentsFragment : Fragment() {
@@ -39,23 +41,27 @@ class PostCommentsFragment : Fragment() {
         val mainActivity = activity as? MainActivity
         mainActivity?.showReturnButtonOnToolbar(true)
 
-        postId = arguments?.let{ PostCommentsFragmentArgs.fromBundle(requireArguments()).postId}.toString()
+        postId = arguments?.let{
+            PostCommentsFragmentArgs.fromBundle(requireArguments()).postId
+        }.toString()
 
         commentText = view.findViewById(R.id.addCommentEditText)
         commentsProgressBar = view.findViewById(R.id.commentsProgressBar)
+        commentsView = view.findViewById(R.id.comments_view)
 
         view.findViewById<TextInputLayout>(R.id.textInputLayout).setEndIconOnClickListener {
             addComment()
         }
 
-        commentsView = view.findViewById(R.id.comments_view)
         commentsView.title.text = getString(R.string.comments)
         commentsView.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = CommentAdapter(commentList)
         commentsView.recyclerView.adapter = adapter
 
-        getComments()
+        lifecycleScope.launch {
+            getComments()
+        }
     }
 
     private fun getComments() {
@@ -72,17 +78,20 @@ class PostCommentsFragment : Fragment() {
     }
 
     private fun addComment() {
-        val comment = Comment (
-//          TODO: Need to get the data from future user implementation
-            userName = "Shay",
-            commentId = UUID.randomUUID().toString(),
-            postId = postId,
-            text = commentText.text.toString()
-        )
+        val comment = MainActivity.user?.let {
+            Comment (
+                commentId = UUID.randomUUID().toString(),
+                userName = it.userName,
+                postId = postId,
+                text = commentText.text.toString()
+            )
+        }
 
-        CommentController.shared.addComment(comment){
-            commentText.text?.clear()
-            adapter.notifyDataSetChanged()
+        if (comment != null) {
+            CommentController.shared.addComment(comment) {
+                commentText.text?.clear()
+                adapter.notifyDataSetChanged()
+            }
         }
     }
 
