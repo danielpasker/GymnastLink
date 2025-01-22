@@ -23,6 +23,7 @@ import com.example.gymnastlink.controller.UserController
 import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.ui.LoginActivity
 import com.example.gymnastlink.ui.MainActivity
+import com.example.gymnastlink.ui.MainActivity.Companion.user
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
 import com.example.gymnastlink.ui.fragments.UpdatesFragment.Companion.postList
@@ -126,14 +127,14 @@ class ProfileFragment : Fragment() {
     }
 
     private fun displayUserData() {
-        userNameEditText.setText(MainActivity.user?.userName)
-        userTitleEditText.setText(MainActivity.user?.userTitle)
-        ageEditText.setText(MainActivity.user?.age.toString())
-        genderEditText.setText(MainActivity.user?.gender)
-        weightEditText.setText(MainActivity.user?.weight.toString())
-        heightEditText.setText(MainActivity.user?.height.toString())
+        userNameEditText.setText(user?.userName)
+        userTitleEditText.setText(user?.userTitle)
+        ageEditText.setText(user?.age.toString())
+        genderEditText.setText(user?.gender)
+        weightEditText.setText(user?.weight.toString())
+        heightEditText.setText(user?.height.toString())
 
-        val imageByteArray = MainActivity.user?.userImg?.let { Converters.decodeImageFromBase64(it) }
+        val imageByteArray = user?.userImg?.let { Converters.decodeImageFromBase64(it) }
         if (imageByteArray != null) {
             BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
                 ?.let { bitmap -> profileImage.setImageBitmap(bitmap) }
@@ -141,7 +142,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getUserPosts() {
-        MainActivity.user?.let {
+        user?.let {
             PostController.shared.getPostsByUserId(it.userId) {
                 userPosts = it.sortedByDescending { it.date }.toMutableList()
                 postAdapter.set(it)
@@ -167,7 +168,7 @@ class ProfileFragment : Fragment() {
 
         val base64Image = imageByteArray?.let { Converters.encodeImageToBase64(it) }
         if (base64Image != null) {
-            MainActivity.user?.userImg = base64Image
+            user?.userImg = base64Image
         }
 
         saveUpdatedData()
@@ -203,7 +204,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun saveUpdatedData() {
-        val userId = MainActivity.user?.userId ?: return
+        val userId = user?.userId ?: return
 
         val updatedData = mapOf(
             "userName" to userNameEditText.text.toString(),
@@ -212,11 +213,15 @@ class ProfileFragment : Fragment() {
             "weight" to weightEditText.text.toString().toDoubleOrNull(),
             "gender" to genderEditText.text.toString(),
             "height" to heightEditText.text.toString().toDoubleOrNull(),
-            "userImg" to MainActivity.user?.userImg
+            "userImg" to user?.userImg
         )
 
         GlobalScope.launch(Dispatchers.IO) {
-            UserController.shared.update(userId, updatedData) {}
+            UserController.shared.update(userId, updatedData) {
+                UserController.shared.getUserById(userId) {
+                    user = it
+                }
+            }
         }
     }
 
