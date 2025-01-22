@@ -11,11 +11,11 @@ import com.example.gymnastlink.model.User
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: User)
+    suspend fun insert(user: User)
 
     @Update
-    fun update(user: User)
+    suspend fun update(user: User)
 
     @Query("SELECT * FROM User WHERE userId = :userId")
-    fun getUserById(userId: String): User?
+    suspend fun getUserById(userId: String): User?
 }

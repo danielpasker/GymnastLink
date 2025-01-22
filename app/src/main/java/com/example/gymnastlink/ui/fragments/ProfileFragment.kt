@@ -28,6 +28,9 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -195,7 +198,9 @@ class ProfileFragment : Fragment() {
             "userImg" to MainActivity.user?.userImg
         )
 
-        UserController.shared.update(userId, updatedData) {}
+        GlobalScope.launch(Dispatchers.IO) {
+            UserController.shared.update(userId, updatedData) {}
+        }
     }
 
 }
