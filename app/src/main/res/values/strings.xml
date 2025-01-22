@@ -47,5 +47,5 @@
     <string name="logout">Logout</string>
     <string name="authentication_succeeded">Authentication succeeded</string>
     <string name="authentication_failed">Authentication failed</string>
-    <string name="sign_in_successfully">Sign in successfully</string>
+    <string name="registered_successfully">registered successfully</string>
 </resources>
