@@ -33,7 +33,7 @@ class NewPostFragment : Fragment() {
     private lateinit var removeImageButton: Button
     private lateinit var imageView: ImageView
     private lateinit var pickImageLauncher: ActivityResultLauncher<Intent>
-    private lateinit var postImageUri: Uri
+    private var postImageUri: Uri? = null
 
 
     override fun onCreateView(
@@ -62,10 +62,6 @@ class NewPostFragment : Fragment() {
             setOnClickListener { removeImage() }
         }
 
-        postImageUri = Uri.parse("android.resource://" +
-                requireContext().packageName +
-                "/drawable/placeholder_image")
-
         pickImageLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
@@ -84,8 +80,10 @@ class NewPostFragment : Fragment() {
     }
 
     private fun saveNewPost() {
-        val imageByteArray = postImageUri.let {
-            uri -> requireContext().contentResolver.openInputStream(uri)?.readBytes()
+        val imageByteArray = postImageUri.let { uri ->
+            if (uri != null) {
+                requireContext().contentResolver.openInputStream(uri)?.readBytes()
+            } else null
         }
 
         val post = MainActivity.user?.let {
@@ -124,9 +122,7 @@ class NewPostFragment : Fragment() {
     }
 
     private fun removeImage() {
-        postImageUri = Uri.parse("android.resource://" +
-                requireContext().packageName +
-                "/drawable/placeholder_image")
+        postImageUri = null
         imageView.setImageResource(0)
         imageView.visibility = ImageView.GONE
         removeImageButton.visibility = Button.GONE
