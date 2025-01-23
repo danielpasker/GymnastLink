@@ -38,14 +38,15 @@ class PostController private constructor(){
 
     fun getPostsByUserId(userId: String, callback: (List<Post>) -> Unit) {
         executer.execute {
-            val localPosts = localdatabase.postDao().getPostsByUserId(userId)
+            val localPosts = localdatabase.postDao().getPostsByUserId(userId).sortedByDescending { it.date }
             if (localPosts.isNotEmpty()) {
                 mainHandler.post { callback(localPosts) }
             } else {
                 firebasePostManager.getPostsByUserId (userId) { firebasePosts ->
+                    val sortedFirebasePosts = firebasePosts.sortedByDescending { it.date }
                     executer.execute {
-                        localdatabase.postDao().insertAll(*firebasePosts.toTypedArray())
-                        mainHandler.post { callback(firebasePosts) }
+                        localdatabase.postDao().insertAll(*sortedFirebasePosts.toTypedArray())
+                        mainHandler.post { callback(sortedFirebasePosts) }
                     }
                 }
             }
