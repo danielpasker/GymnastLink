@@ -67,12 +67,12 @@ class PostCommentsFragment : Fragment() {
     private fun getComments() {
         commentsProgressBar.visibility = View.VISIBLE
 
-        CommentController.shared.getCommentsByPost( {
+        CommentController.shared.getCommentsByPost(postId) {
             commentList = it.toMutableList()
             adapter.set(it)
             adapter.notifyDataSetChanged()
             commentsProgressBar.visibility = View.GONE
-        }, postId)
+        }
 
         startListeningForCommentChanges()
     }
@@ -96,11 +96,11 @@ class PostCommentsFragment : Fragment() {
     }
 
     private fun startListeningForCommentChanges() {
-        CommentController.shared.listenForCommentChanges({ comments ->
+        CommentController.shared.listenForCommentChanges(postId) { comments ->
             commentList = comments.toMutableList()
             adapter.set(comments)
             adapter.notifyDataSetChanged()
-        }, postId)
+        }
     }
 
     override fun onResume() {

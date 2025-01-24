@@ -8,9 +8,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.gymnastlink.R
+import com.example.gymnastlink.controller.WorkoutController
 import com.example.gymnastlink.model.ExerciseItem
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.utils.StringUtils.Companion.capitalizeWords
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 
 class ExerciseDetailsFragment : Fragment() {
@@ -21,6 +23,8 @@ class ExerciseDetailsFragment : Fragment() {
     private lateinit var equipmentName: TextView
     private lateinit var description: TextView
     private lateinit var img: ShapeableImageView
+    private lateinit var addExerciseButton: FloatingActionButton
+    private lateinit var deleteExerciseButton: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +36,6 @@ class ExerciseDetailsFragment : Fragment() {
         return view
     }
 
-    // TODO: add post to my plan when clicking on add button and replace it with delete button if its already saved
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.showReturnButtonOnToolbar(true)
@@ -42,6 +45,29 @@ class ExerciseDetailsFragment : Fragment() {
         equipmentName = view.findViewById(R.id.exercise_details_equipment_name)
         description = view.findViewById(R.id.exercise_details_description)
         img = view.findViewById(R.id.exercise_details_img_view)
+        addExerciseButton = view.findViewById(R.id.exercise_details_save_fab)
+        deleteExerciseButton = view.findViewById(R.id.delete_exercise_fab)
+
+        addExerciseButton.setOnClickListener {
+            exerciseItem.userId = MainActivity.user?.userId
+            WorkoutController.shared.addWorkout(exerciseItem) {
+                addExerciseButton.visibility = FloatingActionButton.GONE
+                deleteExerciseButton.visibility = FloatingActionButton.VISIBLE
+            }
+        }
+
+        deleteExerciseButton.setOnClickListener {
+            exerciseItem.userId = null
+            WorkoutController.shared.deleteWorkout(exerciseItem) {
+                addExerciseButton.visibility = FloatingActionButton.VISIBLE
+                deleteExerciseButton.visibility = FloatingActionButton.GONE
+            }
+        }
+
+        if (exerciseItem.userId == MainActivity.user?.userId) {
+                addExerciseButton.visibility = FloatingActionButton.GONE
+                deleteExerciseButton.visibility = FloatingActionButton.VISIBLE
+        }
 
         displayExercise()
     }
