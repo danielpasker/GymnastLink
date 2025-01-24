@@ -6,6 +6,11 @@ import com.example.gymnastlink.dao.LocalDataBase
 import com.example.gymnastlink.dao.LocalDataBaseRepository
 import com.example.gymnastlink.firebase.FirebasePostManager
 import com.example.gymnastlink.model.Post
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.io.Serializable
+import java.time.LocalDate
 import java.util.concurrent.Executors
 
 class PostController private constructor(){
@@ -57,6 +62,30 @@ class PostController private constructor(){
         executer.execute {
             firebasePostManager.addPost(post) {
                 mainHandler.post { callback() }
+            }
+        }
+    }
+
+    fun update(postId: String, updatedData: Map<String, Serializable?>, callback: () -> Unit) {
+        runBlocking {
+            launch(Dispatchers.IO) {
+                val post = localdatabase.postDao().getPostById(postId)
+
+                post?.let {
+                    val updatedPost = it.copy(
+                        postId = updatedData["postId"] as? String ?: it.postId,
+                        userId = updatedData["userId"] as? String ?: it.userId,
+                        userName = updatedData["userName"] as? String ?: it.userName,
+                        userTitle = updatedData["userTitle"] as? String ?: it.userTitle,
+                        title = updatedData["title"] as? String ?: it.title,
+                        content = updatedData["content"] as? String ?: it.content,
+                        image = updatedData["image"] as? String ?: it.image,
+                        date = updatedData["date"] as? LocalDate ?: it.date
+                    )
+                    localdatabase.postDao().update(updatedPost)
+                }
+
+                firebasePostManager.update(postId, updatedData, callback)
             }
         }
     }

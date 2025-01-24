@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
@@ -66,7 +67,7 @@ class UpdatesFragment : Fragment() {
             }
 
         adapter = PostAdapter(postList, onItemClick = { post ->
-            val action = UpdatesFragmentDirections.actionUpdatesFragmentToFragmentPostComment(post.postId)
+            val action = UpdatesFragmentDirections.actionUpdatesFragmentToFragmentPostComment(post)
             view.findNavController().navigate(action)
         })
         postsView.recyclerView.adapter = adapter

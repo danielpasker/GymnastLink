@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
 import com.example.gymnastlink.controller.CommentController
 import com.example.gymnastlink.model.Comment
+import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.CommentAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
@@ -21,18 +24,22 @@ import java.util.UUID
 
 class PostCommentsFragment : Fragment() {
 
+    private lateinit var post: Post
     private lateinit var commentsView: RecyclerWithTitleView
     private lateinit var adapter: CommentAdapter
     private lateinit var commentText: TextInputEditText
-    private lateinit var postId: String
     private lateinit var commentsProgressBar: ProgressBar
+    private lateinit var editPostButton: ExtendedFloatingActionButton
     private var commentList = mutableListOf<Comment>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_post_comments, container, false)
+        val view = inflater.inflate(R.layout.fragment_post_comments, container, false)
+        post = arguments?.let { PostCommentsFragmentArgs.fromBundle(it).post }!!
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,23 +48,30 @@ class PostCommentsFragment : Fragment() {
         val mainActivity = activity as? MainActivity
         mainActivity?.showReturnButtonOnToolbar(true)
 
-        postId = arguments?.let{
-            PostCommentsFragmentArgs.fromBundle(requireArguments()).postId
-        }.toString()
-
         commentText = view.findViewById(R.id.addCommentEditText)
-        commentsProgressBar = view.findViewById(R.id.commentsProgressBar)
         commentsView = view.findViewById(R.id.comments_view)
+        commentsProgressBar = view.findViewById(R.id.commentsProgressBar)
+        editPostButton = view.findViewById(R.id.edit_post_fab)
+
+        adapter = CommentAdapter(commentList)
+        commentsView.title.text = getString(R.string.comments)
+        commentsView.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        commentsView.recyclerView.adapter = adapter
+
+        if (post.userId == MainActivity.user?.userId) {
+            editPostButton.visibility = ExtendedFloatingActionButton.VISIBLE
+        }
+
+        editPostButton.apply { setOnClickListener {
+                val action = PostCommentsFragmentDirections
+                    .actionPostCommentsFragmentToNewPostFragment(post)
+                view.findNavController().navigate(action)
+            }
+        }
 
         view.findViewById<TextInputLayout>(R.id.textInputLayout).setEndIconOnClickListener {
             addComment()
         }
-
-        commentsView.title.text = getString(R.string.comments)
-        commentsView.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        adapter = CommentAdapter(commentList)
-        commentsView.recyclerView.adapter = adapter
 
         lifecycleScope.launch {
             getComments()
@@ -72,7 +86,7 @@ class PostCommentsFragment : Fragment() {
             adapter.set(it)
             adapter.notifyDataSetChanged()
             commentsProgressBar.visibility = View.GONE
-        }, postId)
+        }, post.postId)
 
         startListeningForCommentChanges()
     }
@@ -82,7 +96,7 @@ class PostCommentsFragment : Fragment() {
             Comment (
                 commentId = UUID.randomUUID().toString(),
                 userName = it.userName,
-                postId = postId,
+                postId = post.postId,
                 text = commentText.text.toString()
             )
         }
@@ -100,7 +114,7 @@ class PostCommentsFragment : Fragment() {
             commentList = comments.toMutableList()
             adapter.set(comments)
             adapter.notifyDataSetChanged()
-        }, postId)
+        }, post.postId)
     }
 
     override fun onResume() {

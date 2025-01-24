@@ -31,18 +31,29 @@
 
     <fragment
         android:id="@+id/newPostFragment"
-        android:name="com.example.gymnastlink.ui.fragments.NewPostFragment"
+        android:name="com.example.gymnastlink.ui.fragments.PostFragment"
         android:label="New Post"
-        tools:layout="@layout/fragment_new_post" />
+        tools:layout="@layout/fragment_post">
+        <argument
+            android:name="post"
+            app:argType="com.example.gymnastlink.model.Post" />
+    </fragment>
 
     <fragment
         android:id="@+id/postCommentsFragment"
         android:name="com.example.gymnastlink.ui.fragments.PostCommentsFragment"
-        android:label="New Post"
+        android:label="postCommentsFragment"
         tools:layout="@layout/fragment_post_comments">
+        <action
+            android:id="@+id/action_postCommentsFragment_to_newPostFragment"
+            app:destination="@id/newPostFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"/>
         <argument
-            android:name="postId"
-            app:argType="string" />
+            android:name="post"
+            app:argType="com.example.gymnastlink.model.Post" />
     </fragment>
 
     <fragment
