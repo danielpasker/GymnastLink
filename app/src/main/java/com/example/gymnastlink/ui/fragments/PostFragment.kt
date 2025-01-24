@@ -187,6 +187,7 @@ class PostFragment : Fragment() {
 
     private fun removeImage() {
         postImageUri = null
+        post?.image = null
         imageView.setImageResource(0)
         imageView.visibility = ImageView.GONE
         removeImageButton.visibility = Button.GONE
