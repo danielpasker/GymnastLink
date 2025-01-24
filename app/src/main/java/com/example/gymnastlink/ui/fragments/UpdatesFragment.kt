@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
@@ -19,6 +20,7 @@ import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import kotlinx.coroutines.launch
 
 class UpdatesFragment : Fragment() {
     private lateinit var postsView: RecyclerWithTitleView
@@ -69,7 +71,9 @@ class UpdatesFragment : Fragment() {
         })
         postsView.recyclerView.adapter = adapter
 
-        getAllPosts()
+        lifecycleScope.launch {
+            getAllPosts()
+        }
     }
 
     private fun getAllPosts() {

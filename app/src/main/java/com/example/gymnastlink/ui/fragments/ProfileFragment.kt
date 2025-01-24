@@ -2,25 +2,39 @@ package com.example.gymnastlink.ui.fragments
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
+import com.example.gymnastlink.controller.PostController
+import com.example.gymnastlink.controller.UserController
 import com.example.gymnastlink.model.Post
+import com.example.gymnastlink.ui.LoginActivity
 import com.example.gymnastlink.ui.MainActivity
+import com.example.gymnastlink.ui.MainActivity.Companion.user
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
+import com.example.gymnastlink.ui.fragments.UpdatesFragment.Companion.postList
+import com.example.gymnastlink.utils.Converters
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -62,17 +76,18 @@ class ProfileFragment : Fragment() {
         heightEditText = view.findViewById(R.id.height_edit_text)
         userPostsView = view.findViewById(R.id.user_posts_view)
         userPostsView.title.text = getString(R.string.user_posts)
+        profileImage = view.findViewById(R.id.profile_user_avatar)
 
-        // TODO: Replace with actual user data
-        postAdapter = PostAdapter(userPosts, onItemClick = {
-            view.findNavController().navigate(R.id.action_profileFragment_to_fragmentPostComment)
+        postAdapter = PostAdapter(userPosts, onItemClick = { post ->
+            val action = ProfileFragmentDirections.actionProfileFragmentToFragmentPostComment(post.postId)
+            view.findNavController().navigate(action)
         })
         userPostsView.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         userPostsView.recyclerView.adapter = postAdapter
 
-        profileImage = view.findViewById(R.id.profile_user_avatar)
-        profileImage.setOnClickListener { openImagePicker() }
-
+        profileImage.setOnClickListener {
+            openImagePicker()
+        }
         editFab = view.findViewById<ExtendedFloatingActionButton>(R.id.edit_profile_fab).apply {
             setOnClickListener {
                 setIsEditing(true)
@@ -81,6 +96,15 @@ class ProfileFragment : Fragment() {
         saveFab = view.findViewById<ExtendedFloatingActionButton>(R.id.save_profile_fab).apply {
             setOnClickListener {
                 setIsEditing(false)
+                saveUpdatedData()
+            }
+        }
+        view.findViewById<Button>(R.id.logout_button).apply {
+            setOnClickListener{
+                Firebase.auth.signOut()
+                val intent = Intent(activity, LoginActivity::class.java)
+                startActivity(intent)
+                activity?.finish()
             }
         }
 
@@ -94,6 +118,37 @@ class ProfileFragment : Fragment() {
                     }
                 }
             }
+
+        displayUserData()
+
+        lifecycleScope.launch {
+            getUserPosts()
+        }
+    }
+
+    private fun displayUserData() {
+        userNameEditText.setText(user?.userName)
+        userTitleEditText.setText(user?.userTitle)
+        ageEditText.setText(user?.age.toString())
+        genderEditText.setText(user?.gender)
+        weightEditText.setText(user?.weight.toString())
+        heightEditText.setText(user?.height.toString())
+
+        val imageByteArray = user?.userImg?.let { Converters.decodeImageFromBase64(it) }
+        if (imageByteArray != null) {
+            BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
+                ?.let { bitmap -> profileImage.setImageBitmap(bitmap) }
+        }
+    }
+
+    private fun getUserPosts() {
+        user?.let {
+            PostController.shared.getPostsByUserId(it.userId) {
+                userPosts = it.sortedByDescending { it.date }.toMutableList()
+                postAdapter.set(it)
+                postAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     private fun openImagePicker() {
@@ -106,6 +161,17 @@ class ProfileFragment : Fragment() {
 
     private fun handleImageSelection(uri: Uri) {
         profileImage.setImageURI(uri)
+
+        val imageByteArray = requireContext().contentResolver.openInputStream(uri)?.use { inputStream ->
+            inputStream.readBytes()
+        }
+
+        val base64Image = imageByteArray?.let { Converters.encodeImageToBase64(it) }
+        if (base64Image != null) {
+            user?.userImg = base64Image
+        }
+
+        saveUpdatedData()
     }
 
     private fun setIsEditing(isEditing: Boolean) {
@@ -136,4 +202,27 @@ class ProfileFragment : Fragment() {
                 }
         }
     }
+
+    private fun saveUpdatedData() {
+        val userId = user?.userId ?: return
+
+        val updatedData = mapOf(
+            "userName" to userNameEditText.text.toString(),
+            "userTitle" to userTitleEditText.text.toString(),
+            "age" to ageEditText.text.toString().toDoubleOrNull(),
+            "weight" to weightEditText.text.toString().toDoubleOrNull(),
+            "gender" to genderEditText.text.toString(),
+            "height" to heightEditText.text.toString().toDoubleOrNull(),
+            "userImg" to user?.userImg
+        )
+
+        GlobalScope.launch(Dispatchers.IO) {
+            UserController.shared.update(userId, updatedData) {
+                UserController.shared.getUserById(userId) {
+                    user = it
+                }
+            }
+        }
+    }
+
 }

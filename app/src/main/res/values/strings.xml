@@ -38,4 +38,14 @@
     <string name="username">username</string>"
     <string name="muscle_format">Muscle: %s</string>
     <string name="equipment_format">Equipment: %s</string>
+    <string name="app_phrase">Another reason to work out</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="sign_in">Sign In</string>
+    <string name="logout">Logout</string>
+    <string name="authentication_succeeded">Authentication succeeded</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="registered_successfully">registered successfully</string>
 </resources>

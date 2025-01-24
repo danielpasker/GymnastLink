@@ -33,7 +33,7 @@ class NewPostFragment : Fragment() {
     private lateinit var removeImageButton: Button
     private lateinit var imageView: ImageView
     private lateinit var pickImageLauncher: ActivityResultLauncher<Intent>
-    private lateinit var postImageUri: Uri
+    private var postImageUri: Uri? = null
 
 
     override fun onCreateView(
@@ -62,7 +62,6 @@ class NewPostFragment : Fragment() {
             setOnClickListener { removeImage() }
         }
 
-        postImageUri = Uri.parse("android.resource://" + requireContext().packageName + "/drawable/placeholder_image")
         pickImageLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
@@ -75,24 +74,34 @@ class NewPostFragment : Fragment() {
 
         view.findViewById<FloatingActionButton>(R.id.save_post_fab).apply {
             setOnClickListener {
-                val imageByteArray = postImageUri.let {
-                    uri -> requireContext().contentResolver.openInputStream(uri)?.readBytes()
-                }
+                saveNewPost()
+            }
+        }
+    }
 
-                val post = Post (
-//                    TODO: Need to get the data from future user implementation
-                    userName = "Shay",
-                    userTitle = "ShayTitle",
-                    postId = UUID.randomUUID().toString(),
-                    title = postTitle.text.toString(),
-                    content = postContent.text.toString(),
-                    image = imageByteArray?.let { Converters.encodeImageToBase64(it) },
-                    date = LocalDate.now()
-                )
+    private fun saveNewPost() {
+        val imageByteArray = postImageUri.let { uri ->
+            if (uri != null) {
+                requireContext().contentResolver.openInputStream(uri)?.readBytes()
+            } else null
+        }
 
-                PostController.shared.addPost(post) {
-                    findNavController().navigateUp()
-                }
+        val post = MainActivity.user?.let {
+            Post (
+                postId = UUID.randomUUID().toString(),
+                userId = it.userId,
+                userName = it.userName,
+                userTitle = it.userTitle,
+                title = postTitle.text.toString(),
+                content = postContent.text.toString(),
+                image = imageByteArray?.let { Converters.encodeImageToBase64(it) },
+                date = LocalDate.now()
+            )
+        }
+
+        if (post != null) {
+            PostController.shared.addPost(post) {
+                findNavController().navigateUp()
             }
         }
     }
@@ -113,7 +122,7 @@ class NewPostFragment : Fragment() {
     }
 
     private fun removeImage() {
-        postImageUri = Uri.parse("android.resource://" + requireContext().packageName + "/drawable/placeholder_image")
+        postImageUri = null
         imageView.setImageResource(0)
         imageView.visibility = ImageView.GONE
         removeImageButton.visibility = Button.GONE

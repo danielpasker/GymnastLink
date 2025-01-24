@@ -45,8 +45,15 @@ class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post)
 
         post.image?.let {
             val imageByteArray = Converters.decodeImageFromBase64(it)
-            BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
-                ?.let { bitmap -> holder.postImage.setImageBitmap(bitmap) }
+            val bitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
+            if (bitmap != null) {
+                holder.postImage.setImageBitmap(bitmap)
+                holder.postImage.visibility = View.VISIBLE
+            } else {
+                holder.postImage.visibility = View.GONE
+            }
+        } ?: run {
+            holder.postImage.visibility = View.GONE
         }
 
         holder.itemView.setOnClickListener { onItemClick(post) }

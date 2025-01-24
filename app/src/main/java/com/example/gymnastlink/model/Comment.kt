@@ -3,8 +3,6 @@ package com.example.gymnastlink.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Entity
 data class Comment(
