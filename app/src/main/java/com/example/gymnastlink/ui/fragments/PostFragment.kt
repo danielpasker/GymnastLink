@@ -38,6 +38,7 @@ class PostFragment : Fragment() {
     private lateinit var postContent: EditText
     private lateinit var uploadImageButton: Button
     private lateinit var removeImageButton: Button
+    private lateinit var deletePostButton: FloatingActionButton
     private lateinit var imageView: ImageView
     private lateinit var pickImageLauncher: ActivityResultLauncher<Intent>
     private var postImageUri: Uri? = null
@@ -68,6 +69,9 @@ class PostFragment : Fragment() {
         removeImageButton = view.findViewById<Button>(R.id.remove_image_button).apply {
             setOnClickListener { removeImage() }
         }
+        deletePostButton = view.findViewById<FloatingActionButton?>(R.id.delete_post_fab).apply {
+            setOnClickListener{ deletePost() }
+        }
 
         pickImageLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -97,6 +101,8 @@ class PostFragment : Fragment() {
         fragmentTitle.text = getString(R.string.edit_post)
         postTitle.setText(post.title)
         postContent.setText(post.content)
+        deletePostButton.visibility = FloatingActionButton.VISIBLE
+
 
         post.image?.let { image ->
             val imageByteArray = Converters.decodeImageFromBase64(image)
@@ -165,6 +171,15 @@ class PostFragment : Fragment() {
 
         if (post != null) {
             PostController.shared.addPost(post) {
+                findNavController().navigateUp()
+            }
+        }
+    }
+
+    private fun deletePost() {
+        post?.let {
+            PostController.shared.deletePost(it) {
+                findNavController().navigateUp()
                 findNavController().navigateUp()
             }
         }

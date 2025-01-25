@@ -90,6 +90,16 @@ class PostController private constructor(){
         }
     }
 
+    fun deletePost(post: Post, callback: () -> Unit) {
+        executer.execute {
+            localdatabase.postDao().deletePost(post)
+
+            firebasePostManager.deletePost(post) {
+                mainHandler.post { callback() }
+            }
+        }
+    }
+
     fun listenForPostChanges(callback: (List<Post>) -> Unit) {
         firebasePostManager.listenForPostChanges { firebasePosts ->
             executer.execute {

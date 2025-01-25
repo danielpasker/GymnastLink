@@ -57,6 +57,13 @@ class FirebasePostManager : FirebaseManager() {
             }
     }
 
+    fun deletePost(post: Post, callback: () -> Unit) {
+        database.collection(Constants.Collections.POSTS).document(post.postId).delete()
+            .addOnCompleteListener{
+                callback()
+            }
+    }
+
     fun listenForPostChanges(callback: (List<Post>) -> Unit) {
         postsListener = database.collection(Constants.Collections.POSTS)
             .addSnapshotListener { snapshots, e ->

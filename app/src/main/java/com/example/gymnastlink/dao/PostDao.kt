@@ -1,5 +1,6 @@
 package com.example.gymnastlink.dao
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -23,5 +24,8 @@ interface PostDao {
 
     @Update
     fun update(post: Post)
+
+    @Delete
+    fun deletePost(post: Post)
 
 }
