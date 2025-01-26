@@ -11,7 +11,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
@@ -55,7 +54,7 @@ class UpdatesFragment : Fragment() {
 
         view.findViewById<ExtendedFloatingActionButton>(R.id.new_post_fab).apply {
             setOnClickListener {
-                findNavController().navigate(R.id.action_updatesFragment_to_newPostFragment)
+                findNavController().navigate(R.id.action_updatesFragment_to_postFragment)
             }
         }
 

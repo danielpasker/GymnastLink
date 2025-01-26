@@ -64,7 +64,7 @@ class PostCommentsFragment : Fragment() {
 
         editPostButton.apply { setOnClickListener {
                 val action = PostCommentsFragmentDirections
-                    .actionPostCommentsFragmentToNewPostFragment(post)
+                    .actionPostCommentsFragmentToPostFragment(post)
                 view.findNavController().navigate(action)
             }
         }
