@@ -21,12 +21,14 @@ import com.example.gymnastlink.R
 import com.example.gymnastlink.utils.Converters
 import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.controller.PostController
+import com.example.gymnastlink.model.Post.Companion.DATE_KEY
 import com.example.gymnastlink.ui.MainActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 
@@ -137,7 +139,7 @@ class PostFragment : Fragment() {
             "title" to postTitle.text.toString(),
             "content" to postContent.text.toString(),
             "image" to imageByteArray?.let { Converters.encodeImageToBase64(it) },
-            "date" to LocalDate.now()
+            "date" to LocalDate.parse(LocalDate.now().toString(), DateTimeFormatter.ISO_DATE)
         )
 
         GlobalScope.launch(Dispatchers.IO) {

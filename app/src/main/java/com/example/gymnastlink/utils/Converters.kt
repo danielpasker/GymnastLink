@@ -1,11 +1,12 @@
 package com.example.gymnastlink.utils
 
 import androidx.room.TypeConverter
-import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import android.util.Base64
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class Converters {
 
@@ -21,6 +22,17 @@ class Converters {
         return dateString?.let {
             LocalDate.parse(it, DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault()))
         }
+    }
+
+    @TypeConverter
+    fun fromString(value: String): List<String> {
+        val listType = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromList(list: List<String>): String {
+        return Gson().toJson(list)
     }
 
     companion object {

@@ -6,6 +6,7 @@ object Constants {
         const val COMMENTS = "comments"
         const val SECRETS = "secrets"
         const val USERS = "users"
+        const val WORKOUTS = "workouts"
     }
 
     object Secrets {

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gymnastlink.R
+import com.example.gymnastlink.controller.WorkoutController
 import com.example.gymnastlink.firebase.FirebaseSecretsManager
 import com.example.gymnastlink.model.CacheEntry
 import com.example.gymnastlink.model.ExerciseItem
@@ -43,10 +44,11 @@ class WorkoutsFragment : Fragment() {
     private lateinit var searchResultAdapter: ExerciseAdapter
     private lateinit var myPlanAdapter: ExerciseAdapter
     private lateinit var exerciseSearchProgressBar: ProgressBar
+    private lateinit var myPlanProgressBar: ProgressBar
 
     companion object {
         val searchResults = mutableListOf<ExerciseItem>()
-        val myPlan = mutableListOf<ExerciseItem>()
+        var myPlan = mutableListOf<ExerciseItem>()
     }
 
     override fun onCreateView(
@@ -64,6 +66,7 @@ class WorkoutsFragment : Fragment() {
         workoutSearchEditText = view.findViewById(R.id.workout_search)
         searchResultsView = view.findViewById(R.id.search_results_view)
         exerciseSearchProgressBar = view.findViewById(R.id.exercise_search_progressBar)
+        myPlanProgressBar = view.findViewById(R.id.my_plan_progressBar)
         myPlanView = view.findViewById(R.id.my_plan_view)
 
         myPlanAdapter = ExerciseAdapter(myPlan)
@@ -80,16 +83,29 @@ class WorkoutsFragment : Fragment() {
 
         workoutSearchEditText.addTextChangedListener(createTextWatcher())
 
-        // Load data asynchronously
         lifecycleScope.launch {
-            // TODO: get my plan from db
+            getMyPlan()
         }
     }
 
     override fun onResume() {
         super.onResume()
+        getMyPlan()
         myPlanAdapter.notifyDataSetChanged()
         searchResultAdapter.notifyDataSetChanged()
+    }
+
+    private fun getMyPlan() {
+        myPlanProgressBar.visibility = View.VISIBLE
+
+        MainActivity.user?.let {
+            WorkoutController.shared.getWorkoutsByUserId(it.userId) {
+                myPlan = it.toMutableList()
+                myPlanAdapter.set(it)
+                myPlanAdapter.notifyDataSetChanged()
+                myPlanProgressBar.visibility = View.GONE
+            }
+        }
     }
 
     private fun createTextWatcher(): TextWatcher {

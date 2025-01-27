@@ -100,7 +100,6 @@ class UpdatesFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         getAllPosts()
-        startListeningForPostChanges()
     }
 
     override fun onPause() {

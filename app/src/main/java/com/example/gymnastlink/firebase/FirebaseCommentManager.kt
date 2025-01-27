@@ -20,7 +20,7 @@ class FirebaseCommentManager : FirebaseManager() {
         }
     }
 
-    fun getCommentsByPost(callback: (List<Comment>) -> Unit, postId: String) {
+    fun getCommentsByPost(postId: String, callback: (List<Comment>) -> Unit) {
         database.collection(Constants.Collections.COMMENTS).whereEqualTo("postId", postId)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {

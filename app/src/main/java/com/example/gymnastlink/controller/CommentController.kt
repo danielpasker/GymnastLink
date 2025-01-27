@@ -18,18 +18,18 @@ class CommentController {
         val shared = CommentController()
     }
 
-    fun getCommentsByPost(callback: (List<Comment>) -> Unit, postId: String) {
+    fun getCommentsByPost(postId: String, callback: (List<Comment>) -> Unit) {
         executer.execute {
             val localComments = localdatabase.commentDao().getCommentsByPost(postId)
             if (localComments.isNotEmpty()) {
                 mainHandler.post { callback(localComments) }
             } else {
-                firebaseCommentManager.getCommentsByPost ({ firebaseComments ->
+                firebaseCommentManager.getCommentsByPost (postId) { firebaseComments ->
                     executer.execute {
                         localdatabase.commentDao().insertAll(*firebaseComments.toTypedArray())
                         mainHandler.post { callback(firebaseComments) }
                     }
-                }, postId)
+                }
             }
         }
     }
@@ -42,7 +42,7 @@ class CommentController {
         }
     }
 
-    fun listenForCommentChanges(callback: (List<Comment>) -> Unit, postId: String) {
+    fun listenForCommentChanges(postId: String, callback: (List<Comment>) -> Unit) {
         firebaseCommentManager.listenForCommentChanges { firebaseComments ->
             executer.execute {
                 localdatabase.commentDao().insertAll(*firebaseComments.toTypedArray())

@@ -20,8 +20,12 @@ import com.example.gymnastlink.model.ExerciseItem
 import com.example.gymnastlink.ui.fragments.WorkoutsFragmentDirections
 import com.example.gymnastlink.utils.StringUtils.Companion.capitalizeWords
 
-class ExerciseAdapter(private val exercises: List<ExerciseItem>) :
+class ExerciseAdapter(private var exercises: List<ExerciseItem>) :
     RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
+
+    fun set(exercises: List<ExerciseItem>) {
+        this.exercises = exercises
+    }
 
     class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val exerciseName: TextView = itemView.findViewById(R.id.exercise_name)
