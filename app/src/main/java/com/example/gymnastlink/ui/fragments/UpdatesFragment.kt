@@ -54,7 +54,7 @@ class UpdatesFragment : Fragment() {
 
         view.findViewById<ExtendedFloatingActionButton>(R.id.new_post_fab).apply {
             setOnClickListener {
-                findNavController().navigate(R.id.action_updatesFragment_to_newPostFragment)
+                findNavController().navigate(R.id.action_updatesFragment_to_postFragment)
             }
         }
 
@@ -66,7 +66,7 @@ class UpdatesFragment : Fragment() {
             }
 
         adapter = PostAdapter(postList, onItemClick = { post ->
-            val action = UpdatesFragmentDirections.actionUpdatesFragmentToFragmentPostComment(post.postId)
+            val action = UpdatesFragmentDirections.actionUpdatesFragmentToFragmentPostComment(post)
             view.findNavController().navigate(action)
         })
         postsView.recyclerView.adapter = adapter
