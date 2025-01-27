@@ -25,6 +25,7 @@
     <string name="comments">Comments</string>
     <string name="edit">Edit</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="edit_post">Edit Post</string>
     <string name="user_posts">User Posts</string>
     <string name="save">Save</string>
     <string name="cm_unit">cm</string>

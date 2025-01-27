@@ -26,7 +26,6 @@ import com.example.gymnastlink.ui.MainActivity
 import com.example.gymnastlink.ui.MainActivity.Companion.user
 import com.example.gymnastlink.ui.adapters.PostAdapter
 import com.example.gymnastlink.ui.components.RecyclerWithTitleView
-import com.example.gymnastlink.ui.fragments.UpdatesFragment.Companion.postList
 import com.example.gymnastlink.utils.Converters
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
@@ -79,7 +78,7 @@ class ProfileFragment : Fragment() {
         profileImage = view.findViewById(R.id.profile_user_avatar)
 
         postAdapter = PostAdapter(userPosts, onItemClick = { post ->
-            val action = ProfileFragmentDirections.actionProfileFragmentToFragmentPostComment(post.postId)
+            val action = ProfileFragmentDirections.actionProfileFragmentToFragmentPostComment(post)
             view.findNavController().navigate(action)
         })
         userPostsView.recyclerView.layoutManager = LinearLayoutManager(requireContext())

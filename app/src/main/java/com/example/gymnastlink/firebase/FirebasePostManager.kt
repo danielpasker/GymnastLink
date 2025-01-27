@@ -4,6 +4,7 @@ import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.utils.Constants
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
+import java.io.Serializable
 
 class FirebasePostManager : FirebaseManager() {
     private var postsListener: ListenerRegistration? = null
@@ -44,6 +45,21 @@ class FirebasePostManager : FirebaseManager() {
     fun addPost(post: Post, callback: () -> Unit) {
         database.collection(Constants.Collections.POSTS).document(post.postId).set(post.json)
             .addOnCompleteListener {
+                callback()
+            }
+    }
+
+    fun update(postId: String, updatedData: Map<String, Serializable?>, callback: () -> Unit) {
+        database.collection(Constants.Collections.POSTS).document(postId)
+            .update(updatedData)
+            .addOnCompleteListener{
+                callback()
+            }
+    }
+
+    fun deletePost(post: Post, callback: () -> Unit) {
+        database.collection(Constants.Collections.POSTS).document(post.postId).delete()
+            .addOnCompleteListener{
                 callback()
             }
     }

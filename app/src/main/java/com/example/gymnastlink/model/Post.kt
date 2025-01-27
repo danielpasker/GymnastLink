@@ -1,5 +1,7 @@
 package com.example.gymnastlink.model
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
@@ -12,11 +14,35 @@ data class Post(
     val userId: String,
     val userName: String,
     val userTitle: String,
-    val title: String,
-    val content: String,
-    val image: String?,
-    val date: LocalDate
-){
+    var title: String,
+    var content: String,
+    var image: String?,
+    var date: LocalDate
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString(),
+        LocalDate.parse(parcel.readString(), DateTimeFormatter.ISO_DATE)
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(postId)
+        parcel.writeString(userId)
+        parcel.writeString(userName)
+        parcel.writeString(userTitle)
+        parcel.writeString(title)
+        parcel.writeString(content)
+        parcel.writeString(image)
+        parcel.writeString(date.toString())
+    }
+
+    override fun describeContents(): Int = 0
+
     companion object {
 
         const val POST_ID_KEY = "postId"
@@ -49,6 +75,17 @@ data class Post(
                 image = image,
                 date = date
             )
+        }
+
+        @JvmField
+        val CREATOR: Parcelable.Creator<Post> = object : Parcelable.Creator<Post> {
+            override fun createFromParcel(parcel: Parcel): Post {
+                return Post(parcel)
+            }
+
+            override fun newArray(size: Int): Array<Post?> {
+                return arrayOfNulls(size)
+            }
         }
     }
 
