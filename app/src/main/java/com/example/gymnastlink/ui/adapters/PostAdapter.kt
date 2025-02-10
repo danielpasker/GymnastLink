@@ -41,7 +41,7 @@ class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post)
         holder.userAvatar.text = post.userName.split(' ').map { it.first() }.joinToString("")
         holder.title.text = post.title
         holder.content.text = post.content
-        holder.date.text = Converters.formatDate(post.date)
+        holder.date.text = Converters.formatDateTime(post.dateTime)
 
         post.image?.let {
             val imageByteArray = Converters.decodeImageFromBase64(it)

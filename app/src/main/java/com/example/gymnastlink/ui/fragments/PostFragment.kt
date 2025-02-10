@@ -18,16 +18,16 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.gymnastlink.R
-import com.example.gymnastlink.utils.Converters
-import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.controller.PostController
-import com.example.gymnastlink.model.Post.Companion.DATE_KEY
+import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.ui.MainActivity
+import com.example.gymnastlink.utils.Converters
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
@@ -72,7 +72,7 @@ class PostFragment : Fragment() {
             setOnClickListener { removeImage() }
         }
         deletePostButton = view.findViewById<FloatingActionButton?>(R.id.delete_post_fab).apply {
-            setOnClickListener{ deletePost() }
+            setOnClickListener { deletePost() }
         }
 
         pickImageLauncher =
@@ -92,14 +92,14 @@ class PostFragment : Fragment() {
         }
 
         post?.let {
-           setEditPostFragment(it)
+            setEditPostFragment(it)
         } ?: run {
             fragmentTitle.text = getString(R.string.new_post_text)
         }
 
     }
 
-    private fun setEditPostFragment(post : Post) {
+    private fun setEditPostFragment(post: Post) {
         fragmentTitle.text = getString(R.string.edit_post)
         postTitle.setText(post.title)
         postContent.setText(post.content)
@@ -144,7 +144,7 @@ class PostFragment : Fragment() {
 
         GlobalScope.launch(Dispatchers.IO) {
             post?.let {
-                PostController.shared.update(it.postId,updatedData) {
+                PostController.shared.update(it.postId, updatedData) {
                     findNavController().navigateUp()
                 }
             }
@@ -159,7 +159,7 @@ class PostFragment : Fragment() {
         }
 
         val post = MainActivity.user?.let {
-            Post (
+            Post(
                 postId = UUID.randomUUID().toString(),
                 userId = it.userId,
                 userName = it.userName,
@@ -167,7 +167,7 @@ class PostFragment : Fragment() {
                 title = postTitle.text.toString(),
                 content = postContent.text.toString(),
                 image = imageByteArray?.let { Converters.encodeImageToBase64(it) },
-                date = LocalDate.now()
+                dateTime = LocalDateTime.now()
             )
         }
 

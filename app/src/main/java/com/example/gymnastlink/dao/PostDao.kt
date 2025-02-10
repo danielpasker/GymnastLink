@@ -10,7 +10,7 @@ import com.example.gymnastlink.model.Post
 @Dao
 interface PostDao {
 
-    @Query("SELECT * FROM Post ORDER BY date DESC")
+    @Query("SELECT * FROM Post ORDER BY dateTime DESC")
     fun getAllPosts(): List<Post>
 
     @Query("SELECT * FROM Post WHERE userId =:userId")
