@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
         android:text="@string/app_name"
-        android:textSize="50dp"
+        android:textSize="50sp"
         android:textColor="@color/light_blue"
         android:gravity="center"/>
 
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_phrase"
-        android:textSize="22dp"
+        android:textSize="22sp"
         android:textColor="@color/light_blue"
         android:gravity="center"/>
 
@@ -96,7 +96,7 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="12dp"
                 android:backgroundTint="@color/black"
                 android:text="@string/login"
                 android:textColor="@color/white"
@@ -112,7 +112,7 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="12dp"
                 android:backgroundTint="@color/light_blue"
                 android:text="@string/register"
                 android:textColor="@color/white"/>
