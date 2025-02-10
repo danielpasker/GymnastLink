@@ -77,8 +77,6 @@ class PostController private constructor() {
                     val updatedPost = it.copy(
                         postId = updatedData["postId"] as? String ?: it.postId,
                         userId = updatedData["userId"] as? String ?: it.userId,
-                        userName = updatedData["userName"] as? String ?: it.userName,
-                        userTitle = updatedData["userTitle"] as? String ?: it.userTitle,
                         title = updatedData["title"] as? String ?: it.title,
                         content = updatedData["content"] as? String ?: it.content,
                         image = updatedData["image"] as? String ?: it.image,

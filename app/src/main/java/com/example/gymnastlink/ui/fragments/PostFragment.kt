@@ -162,8 +162,6 @@ class PostFragment : Fragment() {
             Post(
                 postId = UUID.randomUUID().toString(),
                 userId = it.userId,
-                userName = it.userName,
-                userTitle = it.userTitle,
                 title = postTitle.text.toString(),
                 content = postContent.text.toString(),
                 image = imageByteArray?.let { Converters.encodeImageToBase64(it) },
