@@ -80,7 +80,7 @@ class UpdatesFragment : Fragment() {
         progressBar.visibility = View.VISIBLE
 
         PostController.shared.getAllPosts {
-            postList = it.sortedByDescending { it.date }.toMutableList()
+            postList = it.sortedByDescending { it.dateTime }.toMutableList()
             adapter.set(it)
             adapter.notifyDataSetChanged()
             progressBar.visibility = View.GONE
@@ -91,7 +91,7 @@ class UpdatesFragment : Fragment() {
 
     private fun startListeningForPostChanges() {
         PostController.shared.listenForPostChanges { posts ->
-            postList = posts.toMutableList()
+            postList = posts.sortedByDescending { it.dateTime }.toMutableList()
             adapter.set(posts)
             adapter.notifyDataSetChanged()
         }

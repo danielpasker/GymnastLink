@@ -10,10 +10,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.Serializable
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.concurrent.Executors
 
-class PostController private constructor(){
+class PostController private constructor() {
 
     private val firebasePostManager = FirebasePostManager()
     private val localdatabase: LocalDataBaseRepository = LocalDataBase.database
@@ -26,12 +26,13 @@ class PostController private constructor(){
 
     fun getAllPosts(callback: (List<Post>) -> Unit) {
         executer.execute {
-            val localPosts = localdatabase.postDao().getAllPosts().sortedByDescending { it.date }
+            val localPosts =
+                localdatabase.postDao().getAllPosts().sortedByDescending { it.dateTime }
             if (localPosts.isNotEmpty()) {
                 mainHandler.post { callback(localPosts) }
             } else {
                 firebasePostManager.getAllPosts { firebasePosts ->
-                    val sortedFirebasePosts = firebasePosts.sortedByDescending { it.date }
+                    val sortedFirebasePosts = firebasePosts.sortedByDescending { it.dateTime }
                     executer.execute {
                         localdatabase.postDao().insertAll(*sortedFirebasePosts.toTypedArray())
                         mainHandler.post { callback(sortedFirebasePosts) }
@@ -43,12 +44,13 @@ class PostController private constructor(){
 
     fun getPostsByUserId(userId: String, callback: (List<Post>) -> Unit) {
         executer.execute {
-            val localPosts = localdatabase.postDao().getPostsByUserId(userId).sortedByDescending { it.date }
+            val localPosts =
+                localdatabase.postDao().getPostsByUserId(userId).sortedByDescending { it.dateTime }
             if (localPosts.isNotEmpty()) {
                 mainHandler.post { callback(localPosts) }
             } else {
-                firebasePostManager.getPostsByUserId (userId) { firebasePosts ->
-                    val sortedFirebasePosts = firebasePosts.sortedByDescending { it.date }
+                firebasePostManager.getPostsByUserId(userId) { firebasePosts ->
+                    val sortedFirebasePosts = firebasePosts.sortedByDescending { it.dateTime }
                     executer.execute {
                         localdatabase.postDao().insertAll(*sortedFirebasePosts.toTypedArray())
                         mainHandler.post { callback(sortedFirebasePosts) }
@@ -75,12 +77,10 @@ class PostController private constructor(){
                     val updatedPost = it.copy(
                         postId = updatedData["postId"] as? String ?: it.postId,
                         userId = updatedData["userId"] as? String ?: it.userId,
-                        userName = updatedData["userName"] as? String ?: it.userName,
-                        userTitle = updatedData["userTitle"] as? String ?: it.userTitle,
                         title = updatedData["title"] as? String ?: it.title,
                         content = updatedData["content"] as? String ?: it.content,
                         image = updatedData["image"] as? String ?: it.image,
-                        date = updatedData["date"] as? LocalDate ?: it.date
+                        dateTime = updatedData["dateTime"] as? LocalDateTime ?: it.dateTime
                     )
                     localdatabase.postDao().update(updatedPost)
                 }

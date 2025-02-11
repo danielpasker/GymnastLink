@@ -143,7 +143,7 @@ class ProfileFragment : Fragment() {
     private fun getUserPosts() {
         user?.let {
             PostController.shared.getPostsByUserId(it.userId) {
-                userPosts = it.sortedByDescending { it.date }.toMutableList()
+                userPosts = it.sortedByDescending { it.dateTime }.toMutableList()
                 postAdapter.set(it)
                 postAdapter.notifyDataSetChanged()
             }

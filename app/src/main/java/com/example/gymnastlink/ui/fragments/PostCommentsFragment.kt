@@ -95,7 +95,7 @@ class PostCommentsFragment : Fragment() {
         val comment = MainActivity.user?.let {
             Comment (
                 commentId = UUID.randomUUID().toString(),
-                userName = it.userName,
+                userId = it.userId,
                 postId = post.postId,
                 text = commentText.text.toString()
             )

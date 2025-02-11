@@ -8,8 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymnastlink.R
+import com.example.gymnastlink.controller.UserController
 import com.example.gymnastlink.model.Post
 import com.example.gymnastlink.utils.Converters
+import com.google.android.material.imageview.ShapeableImageView
 
 class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post) -> Unit) :
     RecyclerView.Adapter<PostAdapter.BlogPostViewHolder>() {
@@ -21,7 +23,7 @@ class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post)
     class BlogPostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userName: TextView = itemView.findViewById(R.id.user_name)
         val userTitle: TextView = itemView.findViewById(R.id.user_title)
-        val userAvatar: TextView = itemView.findViewById(R.id.user_avatar)
+        val userAvatar: ShapeableImageView = itemView.findViewById(R.id.post_user_avatar)
         val title: TextView = itemView.findViewById(R.id.post_title)
         val content: TextView = itemView.findViewById(R.id.post_content)
         val postImage: ImageView = itemView.findViewById(R.id.post_image)
@@ -36,12 +38,30 @@ class PostAdapter(private var posts: List<Post>, private val onItemClick: (Post)
     override fun onBindViewHolder(holder: BlogPostViewHolder, position: Int) {
         val post = posts[position]
 
-        holder.userName.text = post.userName
-        holder.userTitle.text = post.userTitle
-        holder.userAvatar.text = post.userName.split(' ').map { it.first() }.joinToString("")
         holder.title.text = post.title
         holder.content.text = post.content
-        holder.date.text = Converters.formatDate(post.date)
+        holder.date.text = Converters.formatDateTime(post.dateTime)
+
+        UserController.shared.getUserById(post.userId) { user ->
+            user?.let {
+                holder.userName.text = it.userName
+                holder.userTitle.text = it.userTitle
+
+                if (it.userImg.isNullOrEmpty()) {
+                    holder.userAvatar.setImageResource(R.drawable.circle_background)
+                } else {
+                    val imageByteArray = Converters.decodeImageFromBase64(it.userImg)
+                    val bitmap =
+                        BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
+
+                    if (bitmap != null) {
+                        holder.userAvatar.setImageBitmap(bitmap)
+                    } else {
+                        holder.userAvatar.setImageResource(R.drawable.circle_background)
+                    }
+                }
+            }
+        }
 
         post.image?.let {
             val imageByteArray = Converters.decodeImageFromBase64(it)

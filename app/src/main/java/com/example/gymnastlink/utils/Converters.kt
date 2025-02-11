@@ -1,26 +1,29 @@
 package com.example.gymnastlink.utils
 
-import androidx.room.TypeConverter
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import android.util.Base64
+import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class Converters {
 
     @TypeConverter
-    fun fromLocalDate(date: LocalDate?): String? {
-        return date?.let {
-            formatDate(it)
+    fun fromLocalDateTime(dateTime: LocalDateTime?): String? {
+        return dateTime?.let {
+            formatDateTime(it)
         }
     }
 
     @TypeConverter
-    fun toLocalDate(dateString: String?): LocalDate? {
-        return dateString?.let {
-            LocalDate.parse(it, DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault()))
+    fun toLocalDateTime(dateTimeString: String?): LocalDateTime? {
+        return dateTimeString?.let {
+            LocalDateTime.parse(
+                it,
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", Locale.getDefault())
+            )
         }
     }
 
@@ -36,10 +39,10 @@ class Converters {
     }
 
     companion object {
-        fun formatDate(date: LocalDate, pattern: String = "dd/MM/yyyy"): String {
+        fun formatDateTime(dateTime: LocalDateTime, pattern: String = "dd/MM/yyyy HH:mm"): String {
             return try {
                 val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
-                date.format(formatter)
+                dateTime.format(formatter)
             } catch (e: Exception) {
                 println("Error formatting date: ${e.message}")
                 ""
